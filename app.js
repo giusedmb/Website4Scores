@@ -1911,15 +1911,15 @@ const app = {
         };
         const activeColors = suitColors[this.primieraCalcActiveSuit];
 
-        // 1 to 10 rank keys
+        // 7, 6, Asso, and then continue (decreasing Primiera point order)
         const ranks = [
-            { val: 1, name: 'Asso' },
-            { val: 2, name: '2' },
-            { val: 3, name: '3' },
-            { val: 4, name: '4' },
-            { val: 5, name: '5' },
-            { val: 6, name: '6' },
             { val: 7, name: '7' },
+            { val: 6, name: '6' },
+            { val: 1, name: 'Asso' },
+            { val: 5, name: '5' },
+            { val: 4, name: '4' },
+            { val: 3, name: '3' },
+            { val: 2, name: '2' },
             { val: 8, name: 'Fante' },
             { val: 9, name: 'Cavallo' },
             { val: 10, name: 'Re' }
@@ -1928,11 +1928,25 @@ const app = {
         const activePlayer = this.state.primieraCalc.activePlayerId;
         const currentSelection = this.state.primieraCalc.selections[activePlayer][this.primieraCalcActiveSuit];
 
+        const game = this.state.activeGame;
+        const otherPlayer = game ? game.players.find(p => p.id !== activePlayer) : null;
+        const otherSelection = (otherPlayer && this.state.primieraCalc.selections[otherPlayer.id])
+            ? this.state.primieraCalc.selections[otherPlayer.id][this.primieraCalcActiveSuit]
+            : null;
+
         ranks.forEach(rank => {
             const isSelected = currentSelection === rank.val;
+            const isSelectedByOther = otherSelection === rank.val;
             const pts = this.primieraPoints[rank.val];
             const btn = document.createElement('button');
-            btn.className = `card-rank-btn ${isSelected ? 'active' : ''}`;
+            
+            let btnClass = 'card-rank-btn';
+            if (isSelected) {
+                btnClass += ' active';
+            } else if (isSelectedByOther) {
+                btnClass += ' taken-by-other';
+            }
+            btn.className = btnClass;
             
             if (isSelected) {
                 btn.style.setProperty('--active-suit-color', activeColors.border);
@@ -1940,10 +1954,19 @@ const app = {
             }
 
             btn.onclick = () => app.togglePrimieraCard(rank.val);
-            btn.innerHTML = `
-                <span class="card-rank-name">${rank.name}</span>
-                <span class="card-rank-pts">${pts} pt</span>
-            `;
+            
+            if (isSelectedByOther && otherPlayer) {
+                btn.innerHTML = `
+                    <span class="card-rank-name">${rank.name}</span>
+                    <span class="card-rank-pts">${pts} pt</span>
+                    <span class="card-rank-taken-label">${this.escapeHTML(otherPlayer.name)}</span>
+                `;
+            } else {
+                btn.innerHTML = `
+                    <span class="card-rank-name">${rank.name}</span>
+                    <span class="card-rank-pts">${pts} pt</span>
+                `;
+            }
             container.appendChild(btn);
         });
     },
@@ -1960,6 +1983,17 @@ const app = {
         } else {
             // Select card
             this.state.primieraCalc.selections[activePlayer][suit] = rankVal;
+
+            // Deselect from the other player if they had selected it (since a card is unique)
+            const game = this.state.activeGame;
+            if (game && game.players) {
+                const otherPlayer = game.players.find(p => p.id !== activePlayer);
+                if (otherPlayer && this.state.primieraCalc.selections[otherPlayer.id]) {
+                    if (this.state.primieraCalc.selections[otherPlayer.id][suit] === rankVal) {
+                        delete this.state.primieraCalc.selections[otherPlayer.id][suit];
+                    }
+                }
+            }
         }
 
         this.renderPrimieraSuitSelector();
