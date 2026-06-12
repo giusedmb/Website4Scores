@@ -65,15 +65,17 @@ const app = {
     loadPlayers() {
         const stored = localStorage.getItem('sk_players');
         if (stored) {
-            this.state.players = JSON.parse(stored);
-        } else {
-            // Default pre-populated list for high fidelity
+            const parsed = JSON.parse(stored);
             const defaults = ['Giuseppe', 'Giada', 'Luca', 'Marco'];
-            this.state.players = defaults.map(name => ({
-                id: this.generateUUID(),
-                name: name,
-                createdAt: new Date().toISOString()
-            }));
+            const isDefaultsOnly = parsed.length === 4 && parsed.every(p => defaults.includes(p.name));
+            if (isDefaultsOnly) {
+                this.state.players = [];
+                this.savePlayers();
+            } else {
+                this.state.players = parsed;
+            }
+        } else {
+            this.state.players = [];
             this.savePlayers();
         }
     },
@@ -158,17 +160,57 @@ const app = {
     },
 
     deletePlayer(id) {
-        // Confirm before deleting
-        if (confirm('Sei sicuro di voler eliminare questo giocatore?')) {
-            this.state.players = this.state.players.filter(p => p.id !== id);
-            this.savePlayers();
-            
-            // Also remove from active setup selections if selected
-            this.state.selectedSetupPlayerIds.delete(id);
-            
-            this.renderPlayersList();
-            this.renderSetupPlayersChecklist();
-            this.validateSetupStartButton();
+        this.showConfirm(
+            'Elimina Giocatore',
+            'Sei sicuro di voler eliminare questo giocatore?',
+            () => {
+                this.state.players = this.state.players.filter(p => p.id !== id);
+                this.savePlayers();
+                
+                // Also remove from active setup selections if selected
+                this.state.selectedSetupPlayerIds.delete(id);
+                
+                this.renderPlayersList();
+                this.renderSetupPlayersChecklist();
+                this.validateSetupStartButton();
+            }
+        );
+    },
+
+    renamePlayer(id) {
+        const player = this.state.players.find(p => p.id === id);
+        if (!player) return;
+        
+        const newName = prompt('Rinomina giocatore:', player.name);
+        if (newName === null) return;
+        
+        const trimmed = newName.trim();
+        if (trimmed === '') {
+            alert('Il nome non può essere vuoto.');
+            return;
+        }
+        
+        const exists = this.state.players.some(p => p.id !== id && p.name.toLowerCase() === trimmed.toLowerCase());
+        if (exists) {
+            alert('Questo giocatore esiste già!');
+            return;
+        }
+        
+        player.name = trimmed;
+        this.savePlayers();
+        
+        if (this.state.activeGame) {
+            const gp = this.state.activeGame.players.find(p => p.id === id);
+            if (gp) {
+                gp.name = trimmed;
+                this.saveActiveGame();
+            }
+        }
+        
+        this.renderPlayersList();
+        this.renderSetupPlayersChecklist();
+        if (this.state.activeGame && this.state.activeGame.isActive) {
+            this.renderGameplay();
         }
     },
 
@@ -193,6 +235,8 @@ const app = {
         this.state.players.forEach(player => {
             const el = document.createElement('div');
             el.className = 'player-bubble';
+            el.setAttribute('title', 'Clicca per rinominare');
+            el.onclick = () => app.renamePlayer(player.id);
             el.innerHTML = `
                 <span class="player-avatar">👤</span>
                 <span class="player-name-bubble">${this.escapeHTML(player.name)}</span>
@@ -544,52 +588,60 @@ const app = {
     },
 
     confirmResetGame() {
-        if (confirm('Sei sicuro di voler azzerare il punteggio e ricominciare la partita corrente? Tutti i round correnti andranno persi.')) {
-            const game = this.state.activeGame;
-            game.rounds = [];
-            
-            if (game.type === 'scopa') {
-                game.players.forEach(p => p.currentScore = 0);
-            } 
-            else if (game.type === 'briscola') {
-                game.players.forEach(p => p.gameWins = 0);
+        this.showConfirm(
+            'Azzera Partita',
+            'Sei sicuro di voler azzerare il punteggio e ricominciare la partita corrente? Tutti i round correnti andranno persi.',
+            () => {
+                const game = this.state.activeGame;
+                game.rounds = [];
+                
+                if (game.type === 'scopa') {
+                    game.players.forEach(p => p.currentScore = 0);
+                } 
+                else if (game.type === 'briscola') {
+                    game.players.forEach(p => p.gameWins = 0);
+                }
+                else if (game.type === 'bisca') {
+                    game.players.forEach(p => p.lives = game.maxLives);
+                }
+                else if (game.type === 'ciccopaolo') {
+                    game.players.forEach(p => {
+                        p.gameWins = 0;
+                        p.currentPartitionScore = 0;
+                    });
+                    game.completedGamesRounds = [];
+                }
+                else if (game.type === 'scala40') {
+                    game.players.forEach(p => {
+                        p.currentScore = 0;
+                        p.isEliminated = false;
+                        p.reentriesCount = 0;
+                    });
+                }
+                else if (game.type === 'standard') {
+                    game.players.forEach(p => {
+                        p.currentScore = 0;
+                        p.roundWins = 0;
+                        game.activeRoundScores[p.id] = 0;
+                    });
+                }
+                
+                this.saveActiveGame();
+                this.renderGameplay();
             }
-            else if (game.type === 'bisca') {
-                game.players.forEach(p => p.lives = game.maxLives);
-            }
-            else if (game.type === 'ciccopaolo') {
-                game.players.forEach(p => {
-                    p.gameWins = 0;
-                    p.currentPartitionScore = 0;
-                });
-                game.completedGamesRounds = [];
-            }
-            else if (game.type === 'scala40') {
-                game.players.forEach(p => {
-                    p.currentScore = 0;
-                    p.isEliminated = false;
-                    p.reentriesCount = 0;
-                });
-            }
-            else if (game.type === 'standard') {
-                game.players.forEach(p => {
-                    p.currentScore = 0;
-                    p.roundWins = 0;
-                    game.activeRoundScores[p.id] = 0;
-                });
-            }
-            
-            this.saveActiveGame();
-            this.renderGameplay();
-        }
+        );
     },
 
     confirmExitGame() {
-        if (confirm('Vuoi davvero abbandonare la partita corrente? I dati di questa sessione andranno persi.')) {
-            this.state.activeGame = null;
-            this.saveActiveGame();
-            this.showDashboard();
-        }
+        this.showConfirm(
+            'Termina Partita',
+            'Vuoi davvero abbandonare la partita corrente? I dati di questa sessione andranno persi.',
+            () => {
+                this.state.activeGame = null;
+                this.saveActiveGame();
+                this.showDashboard();
+            }
+        );
     },
 
     // 8. GAMEPLAY VIEW RENDERING DICTIONARY
@@ -1407,7 +1459,7 @@ const app = {
                     ${isEliminated ? `
                         <span style="font-size:12px; font-weight:700; color:var(--accent-red)">SBALLATO</span>
                     ` : `
-                        <input type="number" class="input-score-field" id="scala40-input-${player.id}" min="0" max="999" placeholder="Punti" oninput="app.validateScala40SaveButton()">
+                        <input type="number" class="input-score-field" id="scala40-input-${player.id}" min="0" max="999" placeholder="Punti" oninput="app.validateScala40SaveButton()" onkeydown="if(event.key === 'Enter') app.saveScala40Round()">
                     `}
                 </div>
             `;
@@ -1584,7 +1636,7 @@ const app = {
                     <span class="input-lbl-sub">Punteggio round da salvare</span>
                 </div>
                 <div>
-                    <input type="number" class="input-score-field" id="standard-input-${player.id}" value="${currentRoundScore}">
+                    <input type="number" class="input-score-field" id="standard-input-${player.id}" value="${currentRoundScore}" onkeydown="if(event.key === 'Enter') app.saveStandardRound()">
                 </div>
             `;
             container.appendChild(row);
@@ -2033,6 +2085,19 @@ const app = {
     closeModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) modal.classList.remove('active');
+    },
+
+    showConfirm(title, message, onConfirm) {
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-message').textContent = message;
+        
+        const confirmBtn = document.getElementById('btn-confirm-action');
+        confirmBtn.onclick = () => {
+            onConfirm();
+            this.closeModal('modal-confirm');
+        };
+        
+        this.openModal('modal-confirm');
     }
 };
 

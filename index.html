@@ -141,7 +141,7 @@
                 </div>
 
                 <!-- PLAYER DIRECTORY -->
-                <div class="players-section">
+                <div class="players-section card">
                     <div class="section-header">
                         <h4>GIOCATORI REGISTRATI</h4>
                     </div>
@@ -150,7 +150,7 @@
                     </div>
                     <div class="players-action-row">
                         <div class="quick-add-form">
-                            <input type="text" id="input-new-player-name" placeholder="Nome nuovo giocatore..." maxlength="20">
+                            <input type="text" id="input-new-player-name" placeholder="Nome nuovo giocatore..." maxlength="20" onkeydown="if(event.key === 'Enter') app.registerPlayerFromDashboard()">
                             <button class="btn btn-accent" onclick="app.registerPlayerFromDashboard()">Aggiungi</button>
                         </div>
                     </div>
@@ -178,7 +178,7 @@
                         
                         <!-- Quick Add in Setup -->
                         <div class="quick-add-form mini">
-                            <input type="text" id="setup-quick-add-name" placeholder="Aggiungi giocatore al volo..." maxlength="20">
+                            <input type="text" id="setup-quick-add-name" placeholder="Aggiungi giocatore al volo..." maxlength="20" onkeydown="if(event.key === 'Enter') app.addPlayerFromSetup()">
                             <button class="btn btn-secondary" onclick="app.addPlayerFromSetup()">+ Aggiungi</button>
                         </div>
 
@@ -253,9 +253,14 @@
     <!-- 1. GENERAL CONFIRM DIALOG -->
     <div id="modal-confirm" class="modal-overlay">
         <div class="modal-card">
-            <h3 id="confirm-title">Conferma</h3>
-            <p id="confirm-message">Sei sicuro?</p>
-            <div class="modal-actions">
+            <div class="modal-header">
+                <h3 id="confirm-title">Conferma</h3>
+                <button class="btn-close" onclick="app.closeModal('modal-confirm')">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <p id="confirm-message" style="margin: 10px 0; font-size: 14px; color: var(--text-secondary);"></p>
+            </div>
+            <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="app.closeModal('modal-confirm')">Annulla</button>
                 <button class="btn btn-danger" id="btn-confirm-action">Conferma</button>
             </div>
