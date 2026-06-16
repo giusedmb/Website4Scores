@@ -2,523 +2,178 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScoreKeeper - Tracker Premium Punti Giochi di Carte</title>
-    <meta name="description" content="Un segnapunti moderno, elegante e reattivo per giochi di carte italiani come Scopa, Briscola, Bisca, Ciccopaolo, Scala 40 e altro.">
-    <!-- Google Fonts: Outfit -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Score Tracker - Calcolatore Punteggi</title>
+    <!-- Google Fonts: Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- HEADER -->
-        <header class="app-header">
-            <div class="header-logo" onclick="app.showDashboard()">
-                <span class="logo-emoji">🏆</span>
-                <h1>ScoreKeeper</h1>
-            </div>
-            <div class="header-actions">
-                <button id="btn-back" class="btn btn-secondary btn-icon-only hidden" onclick="app.goBack()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </button>
+    <div id="app">
+        <!-- HEADER (Shared for main screens) -->
+        <header class="app-header" id="main-header">
+            <div class="header-container">
+                <span class="subtitle">SCEGLI UN GIOCO</span>
+                <h1>Score Tracker</h1>
             </div>
         </header>
 
-        <!-- MAIN VIEW PORT -->
-        <main class="app-main">
-            
-            <!-- 1. DASHBOARD VIEW -->
-            <section id="view-dashboard" class="app-view active">
-                <div class="banner">
-                    <span class="banner-tag">SCEGLI UN GIOCO</span>
-                    <h2 class="banner-title">Score Tracker</h2>
-                </div>
-
-                <div class="games-grid">
-                    <!-- SCOPA CARD -->
-                    <div class="game-card orange" onclick="app.selectGame('scopa')">
-                        <div class="card-inner">
-                            <div class="card-glow"></div>
-                            <div class="card-content">
-                                <div class="game-icon-wrapper">
-                                    <span class="game-icon">🪙</span>
-                                </div>
-                                <div class="game-info">
-                                    <h3>Scopa</h3>
-                                    <p>Carte, Primiera, Settebello, Denari, Scope.</p>
-                                </div>
-                                <span class="active-badge hidden" id="badge-scopa">Attivo</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BRISCOLA CARD -->
-                    <div class="game-card red" onclick="app.selectGame('briscola')">
-                        <div class="card-inner">
-                            <div class="card-glow"></div>
-                            <div class="card-content">
-                                <div class="game-icon-wrapper">
-                                    <span class="game-icon">♥️</span>
-                                </div>
-                                <div class="game-info">
-                                    <h3>Briscola</h3>
-                                    <p>Traccia i punti della smazzata (120 pt totali).</p>
-                                </div>
-                                <span class="active-badge hidden" id="badge-briscola">Attivo</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BISCA CARD -->
-                    <div class="game-card purple" onclick="app.selectGame('bisca')">
-                        <div class="card-inner">
-                            <div class="card-glow"></div>
-                            <div class="card-content">
-                                <div class="game-icon-wrapper">
-                                    <span class="game-icon">♠️</span>
-                                </div>
-                                <div class="game-info">
-                                    <h3>Bisca</h3>
-                                    <p>Gioco ad eliminazione a vite. L'ultimo sopravvissuto vince.</p>
-                                </div>
-                                <span class="active-badge hidden" id="badge-bisca">Attivo</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CICCOPAOLO CARD -->
-                    <div class="game-card green" onclick="app.selectGame('ciccopaolo')">
-                        <div class="card-inner">
-                            <div class="card-glow"></div>
-                            <div class="card-content">
-                                <div class="game-icon-wrapper">
-                                    <span class="game-icon">♣️</span>
-                                </div>
-                                <div class="game-info">
-                                    <h3>Ciccopaolo</h3>
-                                    <p>Variante Scopa con calcolo smazzate alla meglio di 3.</p>
-                                </div>
-                                <span class="active-badge hidden" id="badge-ciccopaolo">Attivo</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SCALA 40 CARD -->
-                    <div class="game-card teal" onclick="app.selectGame('scala40')">
-                        <div class="card-inner">
-                            <div class="card-glow"></div>
-                            <div class="card-content">
-                                <div class="game-icon-wrapper">
-                                    <span class="game-icon">🃏</span>
-                                </div>
-                                <div class="game-info">
-                                    <h3>Scala 40</h3>
-                                    <p>Traccia punti con calcolatore di carte in mano e rientri.</p>
-                                </div>
-                                <span class="active-badge hidden" id="badge-scala40">Attivo</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- STANDARD POINTS CARD -->
-                    <div class="game-card blue" onclick="app.selectGame('standard')">
-                        <div class="card-inner">
-                            <div class="card-glow"></div>
-                            <div class="card-content">
-                                <div class="game-icon-wrapper">
-                                    <span class="game-icon">📊</span>
-                                </div>
-                                <div class="game-info">
-                                    <h3>Punti (Standard)</h3>
-                                    <p>Calcolo generico dei punti a round per qualsiasi gioco.</p>
-                                </div>
-                                <span class="active-badge hidden" id="badge-standard">Attivo</span>
-                            </div>
+        <!-- MAIN CONTENT AREA -->
+        <main class="app-content">
+            <!-- SCREEN: GIOCHI (DASHBOARD) -->
+            <section id="screen-giochi" class="screen-panel">
+                <!-- Registered Players Scroll -->
+                <div class="players-section">
+                    <span class="section-title">GIOCATORI REGISTRATI</span>
+                    <div class="players-scroll-container">
+                        <div id="dashboard-players-list" class="players-list-scroll">
+                            <!-- Dynamically generated player pills -->
                         </div>
                     </div>
                 </div>
 
-                <!-- PLAYER DIRECTORY -->
-                <div class="players-section card">
-                    <div class="section-header">
-                        <h4>GIOCATORI REGISTRATI</h4>
-                    </div>
-                    <div class="players-scroll" id="players-list-container">
-                        <!-- Rendered by JS -->
-                    </div>
-                    <div class="players-action-row">
-                        <div class="quick-add-form">
-                            <input type="text" id="input-new-player-name" placeholder="Nome nuovo giocatore..." maxlength="20" onkeydown="if(event.key === 'Enter') app.registerPlayerFromDashboard()">
-                            <button class="btn btn-accent" onclick="app.registerPlayerFromDashboard()">Aggiungi</button>
+                <!-- Games Grid -->
+                <div class="games-section">
+                    <span class="section-title">I TUOI GIOCHI</span>
+                    <div class="games-grid">
+                        <!-- Card: Scopa -->
+                        <div class="game-card" data-game="scopa">
+                            <div class="game-icon-wrapper orange">
+                                <i data-lucide="diamonds"></i>
+                            </div>
+                            <div class="game-info">
+                                <h3>Scopa <span class="active-badge hidden" id="badge-scopa">ATTIVO</span></h3>
+                                <p>Carte, Primiera, Settebello, Denari, Scope.</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="chevron"></i>
+                        </div>
+
+                        <!-- Card: Briscola -->
+                        <div class="game-card" data-game="briscola">
+                            <div class="game-icon-wrapper red">
+                                <i data-lucide="heart"></i>
+                            </div>
+                            <div class="game-info">
+                                <h3>Briscola <span class="active-badge hidden" id="badge-briscola">ATTIVO</span></h3>
+                                <p>Traccia i punti della smazzata (120 pt totali).</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="chevron"></i>
+                        </div>
+
+                        <!-- Card: Bisca -->
+                        <div class="game-card" data-game="bisca">
+                            <div class="game-icon-wrapper purple">
+                                <i data-lucide="spade"></i>
+                            </div>
+                            <div class="game-info">
+                                <h3>Bisca <span class="active-badge hidden" id="badge-bisca">ATTIVO</span></h3>
+                                <p>Gioco ad eliminazione a vite. L'ultimo sopravvissuto vince.</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="chevron"></i>
+                        </div>
+
+                        <!-- Card: Ciccopaolo -->
+                        <div class="game-card" data-game="ciccopaolo">
+                            <div class="game-icon-wrapper green">
+                                <i data-lucide="clubs"></i>
+                            </div>
+                            <div class="game-info">
+                                <h3>Ciccopaolo <span class="active-badge hidden" id="badge-ciccopaolo">ATTIVO</span></h3>
+                                <p>Variante Scopa con calcolo smazzate alla meglio di 3.</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="chevron"></i>
+                        </div>
+
+                        <!-- Card: Scala 40 -->
+                        <div class="game-card" data-game="scala-quaranta">
+                            <div class="game-icon-wrapper teal">
+                                <i data-lucide="layers"></i>
+                            </div>
+                            <div class="game-info">
+                                <h3>Scala 40 <span class="active-badge hidden" id="badge-scala-quaranta">ATTIVO</span></h3>
+                                <p>Punti Scala 40 con calcolatore carte in mano e rientri.</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="chevron"></i>
+                        </div>
+
+                        <!-- Card: Punti Standard -->
+                        <div class="game-card" data-game="standard">
+                            <div class="game-icon-wrapper blue">
+                                <i data-lucide="list-todo"></i>
+                            </div>
+                            <div class="game-info">
+                                <h3>Punti (Standard) <span class="active-badge hidden" id="badge-standard">ATTIVO</span></h3>
+                                <p>Calcolo generico dei punti a round per qualsiasi gioco.</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="chevron"></i>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 2. SETUP VIEW -->
-            <section id="view-setup" class="app-view">
-                <div class="view-header">
-                    <h2 id="setup-title">Configura Gioco</h2>
-                    <p class="subtitle" id="setup-subtitle">Inserisci le opzioni ed i partecipanti</p>
-                </div>
-
-                <div class="setup-container card">
-                    <!-- Options container depending on selected game -->
-                    <div id="setup-options-container" class="setup-section">
-                        <!-- Dynamic options (target score, format, etc.) -->
+            <!-- SCREEN: GIOCATORI (PLAYER MANAGEMENT) -->
+            <section id="screen-giocatori" class="screen-panel hidden">
+                <div class="player-management-container">
+                    <!-- Add Player Form -->
+                    <div class="settings-card">
+                        <span class="card-section-title">AGGIUNGI GIOCATORE</span>
+                        <form id="add-player-form" class="inline-form">
+                            <input type="text" id="new-player-name-input" placeholder="Nome Giocatore" required autocomplete="off">
+                            <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
+                        </form>
                     </div>
 
-                    <div class="setup-section border-top">
-                        <div class="section-title-wrapper">
-                            <h5>SELEZIONA PARTECIPANTI</h5>
-                            <span class="rules-hint" id="setup-players-requirement">Minimo 2 giocatori</span>
+                    <!-- Players List -->
+                    <div class="settings-card">
+                        <span class="card-section-title" id="players-list-title">GIOCATORI SALVATI (0)</span>
+                        <div id="full-players-list" class="players-list-vertical">
+                            <!-- Dynamic players list -->
                         </div>
-                        
-                        <!-- Quick Add in Setup -->
-                        <div class="quick-add-form mini">
-                            <input type="text" id="setup-quick-add-name" placeholder="Aggiungi giocatore al volo..." maxlength="20" onkeydown="if(event.key === 'Enter') app.addPlayerFromSetup()">
-                            <button class="btn btn-secondary" onclick="app.addPlayerFromSetup()">+ Aggiungi</button>
-                        </div>
-
-                        <!-- Player selection list with checkboxes -->
-                        <div class="setup-players-list" id="setup-players-selection">
-                            <!-- Rendered by JS -->
-                        </div>
-                    </div>
-
-                    <div class="setup-actions">
-                        <button class="btn btn-accent btn-large btn-full" id="btn-start-game" onclick="app.startGame()" disabled>Inizia Partita</button>
                     </div>
                 </div>
             </section>
 
-            <!-- 3. GAMEPLAY VIEWS (DYNAMICALLY RENDERED BY APP STATE) -->
-            <section id="view-gameplay" class="app-view">
-                <div class="gameplay-header">
-                    <div class="game-meta">
-                        <h2 id="gameplay-title">Giocando</h2>
-                        <span id="gameplay-status" class="status-tag">Round 1</span>
-                    </div>
-                    <div class="gameplay-actions">
-                        <button class="btn btn-secondary btn-icon-only" onclick="app.confirmResetGame()" title="Azzera partita">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-                        </button>
-                        <button class="btn btn-danger btn-header-exit" onclick="app.confirmExitGame()">Termina</button>
-                    </div>
-                </div>
-
-                <!-- GAME CONTENT (CONTAINERS FOR SPECIFIC GAMES) -->
-                <div class="game-content-viewport">
-                    
-                    <!-- DYNAMIC SCOREBOARD -->
-                    <div id="gameplay-scoreboard" class="scoreboard-container">
-                        <!-- Rendered by JS based on game type -->
-                    </div>
-
-                    <!-- DYNAMIC SUB-BOARD / EXTRA INFO -->
-                    <div id="gameplay-extra-info" class="extra-info-container">
-                        <!-- Rendered by JS (e.g. Briscola sets won) -->
-                    </div>
-
-                    <!-- ROUNDS LIST -->
-                    <div class="rounds-history-section">
-                        <div class="section-header sticky">
-                            <h4>STORICO ROUND</h4>
-                        </div>
-                        <div class="rounds-list" id="rounds-history-list">
-                            <!-- Rendered by JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BOTTOM ACTION BAR -->
-                <div class="bottom-action-bar" id="gameplay-action-bar">
-                    <!-- Dynamic button rendered by JS (e.g. "Aggiungi Round", "Termina Turno") -->
+            <!-- SCREEN: ACTIVE GAME / SETUP TEMPLATE -->
+            <section id="screen-game" class="screen-panel hidden">
+                <div id="game-container">
+                    <!-- Dynamically populated setup view or active gameplay view -->
                 </div>
             </section>
         </main>
 
-        <!-- FOOTER / CREDIT -->
-        <footer class="app-footer">
-            <p>ScoreKeeper Web Edition &copy; 2026. Progettato per Vercel.</p>
-        </footer>
+        <!-- BOTTOM NAVIGATION BAR -->
+        <nav class="app-nav">
+            <button class="nav-item active" data-tab="giochi">
+                <i data-lucide="gamepad-2"></i>
+                <span>Giochi</span>
+            </button>
+            <button class="nav-item" data-tab="giocatori">
+                <i data-lucide="users"></i>
+                <span>Giocatori</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MODALS & OVERLAYS -->
-    <!-- ========================================== -->
-
-    <!-- 1. GENERAL CONFIRM DIALOG -->
-    <div id="modal-confirm" class="modal-overlay">
-        <div class="modal-card">
+    <!-- MODAL BACKDROP -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <div class="modal-card animate-slide-up">
             <div class="modal-header">
-                <h3 id="confirm-title">Conferma</h3>
-                <button class="btn-close" onclick="app.closeModal('modal-confirm')">&times;</button>
+                <h2 id="modal-title">Titolo Modal</h2>
+                <button id="modal-close-btn" class="btn-close"><i data-lucide="x"></i></button>
             </div>
-            <div class="modal-body text-center">
-                <p id="confirm-message" style="margin: 10px 0; font-size: 14px; color: var(--text-secondary);"></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeModal('modal-confirm')">Annulla</button>
-                <button class="btn btn-danger" id="btn-confirm-action">Conferma</button>
+            <div class="modal-body" id="modal-body-content">
+                <!-- Dynamically generated modal content -->
             </div>
         </div>
     </div>
 
-    <!-- 2. CELEBRATION OVERLAY -->
-    <div id="modal-celebration" class="modal-overlay celebration">
-        <div class="celebration-content">
-            <div class="confetti-container"></div>
-            <div class="trophy-wrapper">
-                <div class="trophy-glow"></div>
-                <span class="trophy-icon">🏆</span>
-            </div>
-            <h2 class="celebration-title" id="celebration-title">VITTORIA!</h2>
-            <h1 class="celebration-winner" id="celebration-winner-name">Giocatore</h1>
-            <p class="celebration-subtitle" id="celebration-subtitle">Ha vinto il match!</p>
-            
-            <div class="leaderboard-card">
-                <h5>CLASSIFICA FINALE</h5>
-                <div class="leaderboard-rows" id="celebration-leaderboard">
-                    <!-- Rendered by JS -->
-                </div>
-            </div>
-
-            <div class="celebration-actions">
-                <button class="btn btn-accent btn-large" id="btn-celebration-action">Gioca Ancora</button>
-            </div>
-        </div>
+    <!-- PERSISTENT CELEBRATION OVERLAY -->
+    <div id="celebration-overlay" class="celebration-overlay hidden">
+        <!-- Dynamically rendered winner/trophy screen -->
     </div>
-
-    <!-- 3. ADD ROUND MODAL - SCOPA / CICCOPAOLO -->
-    <div id="modal-add-round-scopa" class="modal-overlay">
-        <div class="modal-card large-modal scrollable">
-            <div class="modal-header">
-                <h3>Aggiungi Round</h3>
-                <button class="btn-close" onclick="app.closeModal('modal-add-round-scopa')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!-- Classical Points -->
-                <div class="modal-section">
-                    <div class="section-title-wrapper">
-                        <h6>PUNTI CLASSICI (1 PT CIASCUNO)</h6>
-                    </div>
-                    <div class="points-picker-grid">
-                        <!-- Settebello -->
-                        <div class="picker-row">
-                            <span class="picker-label">Settebello 🪙</span>
-                            <div class="picker-selector" id="picker-settebello">
-                                <!-- Rendered by JS -->
-                            </div>
-                        </div>
-                        <!-- Carte -->
-                        <div class="picker-row">
-                            <span class="picker-label">Carte 🎴</span>
-                            <div class="picker-selector" id="picker-carte">
-                                <!-- Rendered by JS -->
-                            </div>
-                        </div>
-                        <!-- Denari -->
-                        <div class="picker-row">
-                            <span class="picker-label">Denari 🪙</span>
-                            <div class="picker-selector" id="picker-denari">
-                                <!-- Rendered by JS -->
-                            </div>
-                        </div>
-                        <!-- Primiera -->
-                        <div class="picker-row">
-                            <div class="picker-label-with-calc">
-                                <span class="picker-label">Primiera 🛡️</span>
-                                <button class="btn btn-tiny btn-accent" onclick="app.openPrimieraCalculator()">Calcola</button>
-                            </div>
-                            <div class="picker-selector" id="picker-primiera">
-                                <!-- Rendered by JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Scope Section -->
-                <div class="modal-section border-top">
-                    <h6>SCOPE FATTE (1 PT CIASCUNA)</h6>
-                    <div class="steppers-container" id="scopa-scope-steppers">
-                        <!-- Rendered by JS for the 2 players -->
-                    </div>
-                </div>
-
-                <!-- Game Specific Extra: Napola or Extra -->
-                <div class="modal-section border-top" id="scopa-extra-section">
-                    <h6 id="scopa-extra-title">PUNTI NAPOLA / NAPOLI</h6>
-                    <div class="steppers-container" id="scopa-extra-steppers">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeModal('modal-add-round-scopa')">Annulla</button>
-                <button class="btn btn-accent" onclick="app.saveScopaRound()">Salva Round</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. PRIMIERA CALCULATOR MODAL -->
-    <div id="modal-primiera-calc" class="modal-overlay nested-modal">
-        <div class="modal-card large-modal scrollable">
-            <div class="modal-header">
-                <h3>Calcolo Primiera</h3>
-                <button class="btn-close" onclick="app.closeModal('modal-primiera-calc')">&times;</button>
-            </div>
-            <div class="modal-body-calc">
-                <!-- Info banner -->
-                <div class="info-banner">
-                    <span class="info-icon">ℹ️</span>
-                    <p>Seleziona la carta più alta che hai per ciascun seme. La Primiera si calcola sommando i valori delle carte selezionate.</p>
-                </div>
-
-                <!-- Player switch tabs -->
-                <div class="calc-tabs" id="primiera-player-tabs">
-                    <!-- Rendered by JS -->
-                </div>
-
-                <!-- Suit grid selector -->
-                <div class="calc-suit-selector">
-                    <div class="suit-tabs" id="primiera-suit-tabs">
-                        <!-- Suit icons: Denari, Coppe, Spade, Bastoni -->
-                    </div>
-                    <div class="cards-grid" id="primiera-cards-grid">
-                        <!-- Ranks: Asso, 2, 3, 4, 5, 6, 7, Fante, Cavallo, Re -->
-                    </div>
-                </div>
-
-                <!-- Live Results -->
-                <div class="calc-scores-overview">
-                    <div class="calc-player-score" id="calc-score-p1">
-                        <span class="calc-name">Player 1</span>
-                        <span class="calc-value">0 pt</span>
-                    </div>
-                    <div class="calc-vs">vs</div>
-                    <div class="calc-player-score" id="calc-score-p2">
-                        <span class="calc-name">Player 2</span>
-                        <span class="calc-value">0 pt</span>
-                    </div>
-                </div>
-
-                <div class="calc-winner-banner" id="calc-winner-banner">
-                    Pareggio o punteggi non calcolati.
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeModal('modal-primiera-calc')">Annulla</button>
-                <button class="btn btn-accent" id="btn-apply-primiera" onclick="app.applyPrimieraWinner()" disabled>Applica Vincitore</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. ADD ROUND MODAL - BRISCOLA -->
-    <div id="modal-add-round-briscola" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3>Aggiungi Mano</h3>
-                <button class="btn-close" onclick="app.closeModal('modal-add-round-briscola')">&times;</button>
-            </div>
-            <div class="modal-body text-center">
-                <p class="subtitle">Trascina il cursore per distribuire i 120 punti totali della smazzata.</p>
-                
-                <!-- Double score display -->
-                <div class="briscola-score-display">
-                    <div class="briscola-player-pts" id="briscola-pts-p1">
-                        <span class="name" id="briscola-lbl-p1">Player 1</span>
-                        <span class="pts">60</span>
-                    </div>
-                    <div class="vs">vs</div>
-                    <div class="briscola-player-pts" id="briscola-pts-p2">
-                        <span class="name" id="briscola-lbl-p2">Player 2</span>
-                        <span class="pts">60</span>
-                    </div>
-                </div>
-
-                <!-- Distribution slider -->
-                <div class="slider-wrapper">
-                    <input type="range" id="briscola-slider" min="0" max="120" value="60" oninput="app.updateBriscolaSlider(this.value)">
-                </div>
-
-                <!-- Visual score ratio bar -->
-                <div class="ratio-bar">
-                    <div id="ratio-bar-p1" class="ratio-part p1-part" style="width: 50%;"></div>
-                    <div id="ratio-bar-p2" class="ratio-part p2-part" style="width: 50%;"></div>
-                </div>
-
-                <!-- Winner Banner -->
-                <div id="briscola-winner-banner" class="hand-winner-banner">
-                    Pareggio (60 - 60)
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeModal('modal-add-round-briscola')">Annulla</button>
-                <button class="btn btn-accent" onclick="app.saveBriscolaRound()">Salva</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 6. ADD ROUND MODAL - SCALA 40 -->
-    <div id="modal-add-round-scala40" class="modal-overlay">
-        <div class="modal-card large-modal scrollable">
-            <div class="modal-header">
-                <h3>Aggiungi Round</h3>
-                <button class="btn-close" onclick="app.closeModal('modal-add-round-scala40')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="info-banner">
-                    <span class="info-icon">ℹ️</span>
-                    <p>Inserisci i punti fatti da ciascun giocatore alla fine del round. Chi chiude la smazzata prende 0 punti.</p>
-                </div>
-
-                <!-- Closer selection -->
-                <div class="modal-section">
-                    <h6>CHI HA CHIUSO IL ROUND?</h6>
-                    <div class="closer-selector-grid" id="scala40-closer-selector">
-                        <!-- Dynamic buttons for players -->
-                    </div>
-                </div>
-
-                <!-- Score input fields for all players -->
-                <div class="modal-section border-top">
-                    <h6>PUNTI DEI GIOCATORI IN MANO</h6>
-                    <div class="scala40-scores-input-list" id="scala40-players-inputs">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeModal('modal-add-round-scala40')">Annulla</button>
-                <button class="btn btn-accent" onclick="app.saveScala40Round()">Salva Round</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 7. ADD ROUND MODAL - STANDARD -->
-    <div id="modal-add-round-standard" class="modal-overlay">
-        <div class="modal-card scrollable">
-            <div class="modal-header">
-                <h3>Nuovo Round</h3>
-                <button class="btn-close" onclick="app.closeModal('modal-add-round-standard')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="subtitle">Inserisci i punti accumulati in questo round da ciascun partecipante.</p>
-                <div class="standard-inputs-list" id="standard-players-inputs">
-                    <!-- Rendered by JS -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeModal('modal-add-round-standard')">Annulla</button>
-                <button class="btn btn-accent" onclick="app.saveStandardRound()">Salva Round</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Core App JS -->
-    <script src="app.js"></script>
 </body>
 </html>
