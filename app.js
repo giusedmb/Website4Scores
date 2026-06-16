@@ -86,16 +86,6 @@ const Store = {
                 console.error("Error loading state", e);
             }
         }
-        
-        // Setup initial default players if empty
-        if (this.state.players.length === 0) {
-            this.state.players = [
-                { id: generateUUID(), name: 'Giuseppe', createdAt: new Date().toISOString() },
-                { id: generateUUID(), name: 'Marco', createdAt: new Date().toISOString() },
-                { id: generateUUID(), name: 'Anna', createdAt: new Date().toISOString() }
-            ];
-            this.save();
-        }
     },
 
     save() {
@@ -1572,7 +1562,7 @@ const App = {
                 <div class="rounds-list">
                     ${historyHTML || `
                         <div class="empty-placeholder" style="padding: 30px 10px;">
-                            <i data-lucide="diamonds"></i>
+                            <i data-lucide="diamond"></i>
                             <h4>Nessuna smazzata</h4>
                             <p>Esegui la smazzata e inserisci i punti per iniziare.</p>
                         </div>
@@ -3019,7 +3009,7 @@ const App = {
                 <div class="rounds-list">
                     ${historyHTML || `
                         <div class="empty-placeholder" style="padding: 30px 10px;">
-                            <i data-lucide="clubs"></i>
+                            <i data-lucide="club"></i>
                             <h4>Nessun round</h4>
                             <p>Esegui la smazzata e inserisci i punti per iniziare.</p>
                         </div>
