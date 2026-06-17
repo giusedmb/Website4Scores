@@ -605,6 +605,7 @@ const App = {
         Store.state.currentScreen = 'game';
         Store.state.activeGameId = gameId;
         
+        document.body.classList.add('game-active');
         document.getElementById('main-header').classList.add('hidden');
         document.getElementById('screen-giochi').classList.add('hidden');
         document.getElementById('screen-giocatori').classList.add('hidden');
@@ -615,6 +616,7 @@ const App = {
     },
 
     goBack() {
+        document.body.classList.remove('game-active');
         document.body.classList.remove('bisca-active-mode');
         Store.state.currentScreen = 'dashboard';
         Store.state.activeGameId = null;
@@ -804,20 +806,26 @@ const App = {
                 <h2>Nuova Partita</h2>
             </div>
             
-            <div class="settings-card">
-                <span class="card-section-title">AGGIUNGI RAPIDO</span>
-                <form id="setup-add-player-form" class="inline-form">
-                    <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
-                    <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
-                </form>
-            </div>
-
-            <div class="settings-card">
-                <span class="card-section-title">SELEZIONA PARTECIPANTI (MIN. 2)</span>
-                <div id="setup-players-list-container" class="setup-players-list">
-                    ${buildList()}
+            <div class="setup-container">
+                <div class="setup-column-settings">
+                    <div class="settings-card">
+                        <span class="card-section-title">AGGIUNGI RAPIDO</span>
+                        <form id="setup-add-player-form" class="inline-form">
+                            <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
+                            <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
+                        </form>
+                    </div>
                 </div>
-                <button id="btn-start-game" class="btn-primary" disabled>Inizia Partita</button>
+
+                <div class="setup-column-players">
+                    <div class="settings-card">
+                        <span class="card-section-title">SELEZIONA PARTECIPANTI (MIN. 2)</span>
+                        <div id="setup-players-list-container" class="setup-players-list">
+                            ${buildList()}
+                        </div>
+                        <button id="btn-start-game" class="btn-primary" disabled>Inizia Partita</button>
+                    </div>
+                </div>
             </div>
         `;
         
@@ -1330,35 +1338,41 @@ const App = {
                     <h2>Nuova Partita Scopa</h2>
                 </div>
                 
-                <div class="settings-card">
-                    <span class="card-section-title">PUNTEGGIO DI ARRIVO</span>
-                    <div class="options-grid">
-                        <button class="option-btn scopa-target-opt ${targetScore === 11 ? 'selected color-orange' : ''}" data-val="11">11 pt</button>
-                        <button class="option-btn scopa-target-opt ${targetScore === 21 ? 'selected color-orange' : ''}" data-val="21">21 pt</button>
-                    </div>
-                    
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
-                        <span style="font-size:13px; color:var(--text-secondary);">Target personalizzato:</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <input type="number" id="scopa-custom-target" value="${targetScore}" min="5" max="99" style="width: 80px; padding: 6px 12px; text-align:center;">
+                <div class="setup-container">
+                    <div class="setup-column-settings">
+                        <div class="settings-card">
+                            <span class="card-section-title">PUNTEGGIO DI ARRIVO</span>
+                            <div class="options-grid">
+                                <button class="option-btn scopa-target-opt ${targetScore === 11 ? 'selected color-orange' : ''}" data-val="11">11 pt</button>
+                                <button class="option-btn scopa-target-opt ${targetScore === 21 ? 'selected color-orange' : ''}" data-val="21">21 pt</button>
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+                                <span style="font-size:13px; color:var(--text-secondary);">Target personalizzato:</span>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <input type="number" id="scopa-custom-target" value="${targetScore}" min="5" max="99" style="width: 80px; padding: 6px 12px; text-align:center;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <span class="card-section-title">AGGIUNGI RAPIDO</span>
+                            <form id="setup-add-player-form" class="inline-form">
+                                <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
+                                <button type="submit" class="btn-icon-accent" style="background-color: var(--accent-orange)"><i data-lucide="plus-circle"></i></button>
+                            </form>
                         </div>
                     </div>
-                </div>
 
-                <div class="settings-card">
-                    <span class="card-section-title">AGGIUNGI RAPIDO</span>
-                    <form id="setup-add-player-form" class="inline-form">
-                        <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
-                        <button type="submit" class="btn-icon-accent" style="background-color: var(--accent-orange)"><i data-lucide="plus-circle"></i></button>
-                    </form>
-                </div>
-
-                <div class="settings-card">
-                    <span class="card-section-title">SELEZIONA GIOCATORI (ESATTAMENTE 2)</span>
-                    <div id="setup-players-list-container" class="setup-players-list">
-                        ${buildList()}
+                    <div class="setup-column-players">
+                        <div class="settings-card">
+                            <span class="card-section-title">SELEZIONA GIOCATORI (ESATTAMENTE 2)</span>
+                            <div id="setup-players-list-container" class="setup-players-list">
+                                ${buildList()}
+                            </div>
+                            <button id="btn-start-game" class="btn-primary color-orange" disabled>Inizia Scopa</button>
+                        </div>
                     </div>
-                    <button id="btn-start-game" class="btn-primary color-orange" disabled>Inizia Scopa</button>
                 </div>
             `;
             
@@ -1951,29 +1965,35 @@ const App = {
                     <h2>Nuovo Match Briscola</h2>
                 </div>
                 
-                <div class="settings-card">
-                    <span class="card-section-title">FORMATO MATCH</span>
-                    <div class="options-grid">
-                        <button class="option-btn briscola-format-opt ${targetWins === 1 ? 'selected color-red' : ''}" data-val="1">Singolo</button>
-                        <button class="option-btn briscola-format-opt ${targetWins === 2 ? 'selected color-red' : ''}" data-val="2">Meglio di 3 (2)</button>
-                        <button class="option-btn briscola-format-opt ${targetWins === 3 ? 'selected color-red' : ''}" data-val="3">Meglio di 5 (3)</button>
-                    </div>
-                </div>
+                <div class="setup-container">
+                    <div class="setup-column-settings">
+                        <div class="settings-card">
+                            <span class="card-section-title">FORMATO MATCH</span>
+                            <div class="options-grid">
+                                <button class="option-btn briscola-format-opt ${targetWins === 1 ? 'selected color-red' : ''}" data-val="1">Singolo</button>
+                                <button class="option-btn briscola-format-opt ${targetWins === 2 ? 'selected color-red' : ''}" data-val="2">Meglio di 3 (2)</button>
+                                <button class="option-btn briscola-format-opt ${targetWins === 3 ? 'selected color-red' : ''}" data-val="3">Meglio di 5 (3)</button>
+                            </div>
+                        </div>
 
-                <div class="settings-card">
-                    <span class="card-section-title">AGGIUNGI RAPIDO</span>
-                    <form id="setup-add-player-form" class="inline-form">
-                        <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
-                        <button type="submit" class="btn-icon-accent" style="background-color: var(--accent-red)"><i data-lucide="plus-circle"></i></button>
-                    </form>
-                </div>
-
-                <div class="settings-card">
-                    <span class="card-section-title">SELEZIONA PARTECIPANTI (ESATTAMENTE 2)</span>
-                    <div id="setup-players-list-container" class="setup-players-list">
-                        ${buildList()}
+                        <div class="settings-card">
+                            <span class="card-section-title">AGGIUNGI RAPIDO</span>
+                            <form id="setup-add-player-form" class="inline-form">
+                                <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
+                                <button type="submit" class="btn-icon-accent" style="background-color: var(--accent-red)"><i data-lucide="plus-circle"></i></button>
+                            </form>
+                        </div>
                     </div>
-                    <button id="btn-start-game" class="btn-primary color-red" disabled>Inizia Briscola</button>
+
+                    <div class="setup-column-players">
+                        <div class="settings-card">
+                            <span class="card-section-title">SELEZIONA PARTECIPANTI (ESATTAMENTE 2)</span>
+                            <div id="setup-players-list-container" class="setup-players-list">
+                                ${buildList()}
+                            </div>
+                            <button id="btn-start-game" class="btn-primary color-red" disabled>Inizia Briscola</button>
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -2418,35 +2438,41 @@ const App = {
                     <h2>Nuova Partita Bisca</h2>
                 </div>
                 
-                <div class="settings-card">
-                    <span class="card-section-title">VITE DI PARTENZA</span>
-                    <div class="options-grid">
-                        <button class="option-btn bisca-lives-opt ${maxLives === 3 ? 'selected' : ''}" data-val="3">3</button>
-                        <button class="option-btn bisca-lives-opt ${maxLives === 5 ? 'selected' : ''}" data-val="5">5</button>
-                        <button class="option-btn bisca-lives-opt ${maxLives === 7 ? 'selected' : ''}" data-val="7">7</button>
-                        <button class="option-btn bisca-lives-opt ${maxLives === 10 ? 'selected' : ''}" data-val="10">10</button>
-                    </div>
-                    
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
-                        <span style="font-size:13px; color:var(--text-secondary);">Vite personalizzate:</span>
-                        <input type="number" id="bisca-custom-lives" value="${maxLives}" min="1" max="99" style="width: 80px; padding: 6px 12px; text-align:center;">
-                    </div>
-                </div>
+                <div class="setup-container">
+                    <div class="setup-column-settings">
+                        <div class="settings-card">
+                            <span class="card-section-title">VITE DI PARTENZA</span>
+                            <div class="options-grid">
+                                <button class="option-btn bisca-lives-opt ${maxLives === 3 ? 'selected' : ''}" data-val="3">3</button>
+                                <button class="option-btn bisca-lives-opt ${maxLives === 5 ? 'selected' : ''}" data-val="5">5</button>
+                                <button class="option-btn bisca-lives-opt ${maxLives === 7 ? 'selected' : ''}" data-val="7">7</button>
+                                <button class="option-btn bisca-lives-opt ${maxLives === 10 ? 'selected' : ''}" data-val="10">10</button>
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+                                <span style="font-size:13px; color:var(--text-secondary);">Vite personalizzate:</span>
+                                <input type="number" id="bisca-custom-lives" value="${maxLives}" min="1" max="99" style="width: 80px; padding: 6px 12px; text-align:center;">
+                            </div>
+                        </div>
 
-                <div class="settings-card">
-                    <span class="card-section-title">AGGIUNGI RAPIDO</span>
-                    <form id="setup-add-player-form" class="inline-form">
-                        <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
-                        <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
-                    </form>
-                </div>
-
-                <div class="settings-card">
-                    <span class="card-section-title">SELEZIONA PARTECIPANTI (MIN. 2)</span>
-                    <div id="setup-players-list-container" class="setup-players-list">
-                        ${buildList()}
+                        <div class="settings-card">
+                            <span class="card-section-title">AGGIUNGI RAPIDO</span>
+                            <form id="setup-add-player-form" class="inline-form">
+                                <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
+                                <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
+                            </form>
+                        </div>
                     </div>
-                    <button id="btn-start-game" class="btn-primary" disabled>Inizia Bisca</button>
+
+                    <div class="setup-column-players">
+                        <div class="settings-card">
+                            <span class="card-section-title">SELEZIONA PARTECIPANTI (MIN. 2)</span>
+                            <div id="setup-players-list-container" class="setup-players-list">
+                                ${buildList()}
+                            </div>
+                            <button id="btn-start-game" class="btn-primary" disabled>Inizia Bisca</button>
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -2796,40 +2822,46 @@ const App = {
                     <h2>Nuova Partita Ciccopaolo</h2>
                 </div>
                 
-                <div class="settings-card">
-                    <span class="card-section-title">PUNTEGGIO DI ARRIVO</span>
-                    <div class="options-grid">
-                        <button class="option-btn cp-target-opt ${targetScore === 21 ? 'selected' : ''}" data-val="21">21 pt</button>
-                        <button class="option-btn cp-target-opt ${targetScore === 31 ? 'selected' : ''}" data-val="31">31 pt</button>
-                    </div>
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
-                        <span style="font-size:13px; color:var(--text-secondary);">Target personalizzato:</span>
-                        <input type="number" id="cp-custom-target" value="${targetScore}" min="5" max="99" style="width: 80px; padding: 6px 12px; text-align:center;">
-                    </div>
-                </div>
+                <div class="setup-container">
+                    <div class="setup-column-settings">
+                        <div class="settings-card">
+                            <span class="card-section-title">PUNTEGGIO DI ARRIVO</span>
+                            <div class="options-grid">
+                                <button class="option-btn cp-target-opt ${targetScore === 21 ? 'selected' : ''}" data-val="21">21 pt</button>
+                                <button class="option-btn cp-target-opt ${targetScore === 31 ? 'selected' : ''}" data-val="31">31 pt</button>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+                                <span style="font-size:13px; color:var(--text-secondary);">Target personalizzato:</span>
+                                <input type="number" id="cp-custom-target" value="${targetScore}" min="5" max="99" style="width: 80px; padding: 6px 12px; text-align:center;">
+                            </div>
+                        </div>
 
-                <div class="settings-card">
-                    <span class="card-section-title">FORMATO MATCH</span>
-                    <div class="options-grid">
-                        <button class="option-btn cp-format-opt ${matchFormat === 'Botta secca' ? 'selected' : ''}" data-val="Botta secca">Botta secca</button>
-                        <button class="option-btn cp-format-opt ${matchFormat === 'Alla meglio di 3' ? 'selected' : ''}" data-val="Alla meglio di 3">Alla meglio di 3</button>
-                    </div>
-                </div>
+                        <div class="settings-card">
+                            <span class="card-section-title">FORMATO MATCH</span>
+                            <div class="options-grid">
+                                <button class="option-btn cp-format-opt ${matchFormat === 'Botta secca' ? 'selected' : ''}" data-val="Botta secca">Botta secca</button>
+                                <button class="option-btn cp-format-opt ${matchFormat === 'Alla meglio di 3' ? 'selected' : ''}" data-val="Alla meglio di 3">Alla meglio di 3</button>
+                            </div>
+                        </div>
 
-                <div class="settings-card">
-                    <span class="card-section-title">AGGIUNGI RAPIDO</span>
-                    <form id="setup-add-player-form" class="inline-form">
-                        <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
-                        <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
-                    </form>
-                </div>
-
-                <div class="settings-card">
-                    <span class="card-section-title">SELEZIONA PARTECIPANTI (2 o 3)</span>
-                    <div id="setup-players-list-container" class="setup-players-list">
-                        ${buildList()}
+                        <div class="settings-card">
+                            <span class="card-section-title">AGGIUNGI RAPIDO</span>
+                            <form id="setup-add-player-form" class="inline-form">
+                                <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
+                                <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
+                            </form>
+                        </div>
                     </div>
-                    <button id="btn-start-game" class="btn-primary" disabled>Inizia Ciccopaolo</button>
+
+                    <div class="setup-column-players">
+                        <div class="settings-card">
+                            <span class="card-section-title">SELEZIONA PARTECIPANTI (2 o 3)</span>
+                            <div id="setup-players-list-container" class="setup-players-list">
+                                ${buildList()}
+                            </div>
+                            <button id="btn-start-game" class="btn-primary" disabled>Inizia Ciccopaolo</button>
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -3482,35 +3514,41 @@ const App = {
                     <h2>Nuova Partita Scala 40</h2>
                 </div>
                 
-                <div class="settings-card">
-                    <span class="card-section-title">PUNTEGGIO DI ELIMINAZIONE</span>
-                    <div class="options-grid">
-                        <button class="option-btn sq-target-opt ${targetScore === 101 ? 'selected color-red' : ''}" data-val="101">101 pt</button>
-                        <button class="option-btn sq-target-opt ${targetScore === 151 ? 'selected color-red' : ''}" data-val="151">151 pt</button>
-                        <button class="option-btn sq-target-opt ${targetScore === 201 ? 'selected color-red' : ''}" data-val="201">201 pt</button>
-                        <button class="option-btn sq-target-opt ${targetScore === 301 ? 'selected color-red' : ''}" data-val="301">301 pt</button>
-                    </div>
-                    
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
-                        <span style="font-size:13px; color:var(--text-secondary);">Target personalizzato:</span>
-                        <input type="number" id="sq-custom-target" value="${targetScore}" min="50" max="999" step="10" style="width: 80px; padding: 6px 12px; text-align:center;">
-                    </div>
-                </div>
+                <div class="setup-container">
+                    <div class="setup-column-settings">
+                        <div class="settings-card">
+                            <span class="card-section-title">PUNTEGGIO DI ELIMINAZIONE</span>
+                            <div class="options-grid">
+                                <button class="option-btn sq-target-opt ${targetScore === 101 ? 'selected color-red' : ''}" data-val="101">101 pt</button>
+                                <button class="option-btn sq-target-opt ${targetScore === 151 ? 'selected color-red' : ''}" data-val="151">151 pt</button>
+                                <button class="option-btn sq-target-opt ${targetScore === 201 ? 'selected color-red' : ''}" data-val="201">201 pt</button>
+                                <button class="option-btn sq-target-opt ${targetScore === 301 ? 'selected color-red' : ''}" data-val="301">301 pt</button>
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+                                <span style="font-size:13px; color:var(--text-secondary);">Target personalizzato:</span>
+                                <input type="number" id="sq-custom-target" value="${targetScore}" min="50" max="999" step="10" style="width: 80px; padding: 6px 12px; text-align:center;">
+                            </div>
+                        </div>
 
-                <div class="settings-card">
-                    <span class="card-section-title">AGGIUNGI RAPIDO</span>
-                    <form id="setup-add-player-form" class="inline-form">
-                        <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
-                        <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
-                    </form>
-                </div>
-
-                <div class="settings-card">
-                    <span class="card-section-title">SELEZIONA PARTECIPANTI (MIN. 2)</span>
-                    <div id="setup-players-list-container" class="setup-players-list">
-                        ${buildList()}
+                        <div class="settings-card">
+                            <span class="card-section-title">AGGIUNGI RAPIDO</span>
+                            <form id="setup-add-player-form" class="inline-form">
+                                <input type="text" id="setup-player-name" placeholder="Nome Giocatore" required autocomplete="off">
+                                <button type="submit" class="btn-icon-accent"><i data-lucide="plus-circle"></i></button>
+                            </form>
+                        </div>
                     </div>
-                    <button id="btn-start-game" class="btn-primary" disabled>Inizia Partita</button>
+
+                    <div class="setup-column-players">
+                        <div class="settings-card">
+                            <span class="card-section-title">SELEZIONA PARTECIPANTI (MIN. 2)</span>
+                            <div id="setup-players-list-container" class="setup-players-list">
+                                ${buildList()}
+                            </div>
+                            <button id="btn-start-game" class="btn-primary" disabled>Inizia Partita</button>
+                        </div>
+                    </div>
                 </div>
             `;
             

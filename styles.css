@@ -489,14 +489,27 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 .game-view-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
     padding: 8px 0 16px 0;
+    margin-bottom: 8px;
+}
+
+.game-view-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .game-title-row {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
 }
 
 .btn-back {
@@ -511,6 +524,7 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     display: flex;
     align-items: center;
     gap: 6px;
+    flex-shrink: 0;
 }
 
 .btn-back:active {
@@ -547,12 +561,26 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 .option-btn.selected.color-red { background-color: var(--accent-red); border-color: var(--accent-red); }
 .option-btn.selected.color-orange { background-color: var(--accent-orange); border-color: var(--accent-orange); }
 
+/* Game Setup Layout Container */
+.setup-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.setup-column-settings,
+.setup-column-players {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 /* Setup Player Grid */
 .setup-players-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 250px;
+    max-height: 220px;
     overflow-y: auto;
     margin-bottom: 16px;
     padding: 4px;
@@ -561,12 +589,13 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 .setup-player-item {
     background-color: var(--card-bg-light);
     border: 1px solid var(--card-stroke);
-    border-radius: 12px;
-    padding: 12px 16px;
+    border-radius: 10px;
+    padding: 10px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    font-size: 15px;
     font-weight: 600;
     transition: border-color 0.2s;
 }
@@ -2106,29 +2135,10 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
         align-items: start;
     }
 
-    /* Game Setup layouts: two columns (settings/add form vs players checklists) */
-    #game-container:has(.settings-card):not(:has(.rounds-history-section)) {
-        display: grid;
+    /* Game Setup layout columns on desktop */
+    .setup-container {
         grid-template-columns: 1fr 1.2fr;
         gap: 32px;
-        align-items: start;
-    }
-    
-    #game-container:has(.settings-card):not(:has(.rounds-history-section)) .game-view-header {
-        grid-column: span 2;
-    }
-    
-    #game-container:has(.settings-card):not(:has(.rounds-history-section)) .settings-card:has(.setup-players-list) {
-        grid-column: 2;
-        grid-row: 2 / span 3;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    #game-container:has(.settings-card):not(:has(.rounds-history-section)) .settings-card:has(.setup-players-list) .setup-players-list {
-        flex: 1;
-        max-height: none;
     }
 
     /* Active Gameplay views: Split layout (Interactive Panel vs Rounds History) */
@@ -2217,10 +2227,27 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
         gap: 16px;
     }
     
+    .setup-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    .setup-column-players .settings-card:has(.setup-players-list) {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .setup-column-players .settings-card:has(.setup-players-list) .setup-players-list {
+        flex: 1;
+    }
+
     .setup-players-list {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        max-height: 400px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        max-height: 350px;
         gap: 12px;
     }
 }
@@ -2550,6 +2577,16 @@ body.bisca-active-mode .app-content {
     color: var(--score-negative) !important;
     fill: none !important;
     flex-shrink: 0;
+}
+
+/* Mobile active game screen tweaks to prevent overlapping nav */
+@media (max-width: 1023px) {
+    body.game-active .app-nav {
+        display: none !important;
+    }
+    body.game-active #app {
+        padding-bottom: var(--safe-bottom) !important;
+    }
 }
 
 
