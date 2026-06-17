@@ -2571,10 +2571,16 @@ const App = {
             // Hearts renderer
             let heartsHTML = '';
             if (isElim) {
+                const letters = "ELIMINATO".split("");
+                const lettersHTML = letters.map((l, i) => 
+                    `<span style="animation: matrix-glow 1.8s infinite; animation-delay: ${i * 0.15}s; font-family: monospace, sans-serif; font-weight: 900;">${l}</span>`
+                ).join("");
                 heartsHTML = `
-                    <div class="bisca-eliminated-badge">
-                        <i data-lucide="heart-off" style="width:18px; height:18px;"></i>
-                        <span>ELIMINATO</span>
+                    <div class="bisca-eliminated-vertical">
+                        <i data-lucide="heart-off" style="width:14px; height:14px; color: var(--score-negative);"></i>
+                        <div class="matrix-letters">
+                            ${lettersHTML}
+                        </div>
                     </div>
                 `;
             } else {

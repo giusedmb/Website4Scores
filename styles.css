@@ -2498,3 +2498,59 @@ body.bisca-active-mode .app-content {
     text-align: center;
 }
 
+/* Vertical matrix ELIMINATO badge */
+.bisca-eliminated-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 44px; /* Same as the height of the Resuscita button */
+    height: 180px; /* Same as the max-width of the Resuscita button */
+    padding: 14px 6px;
+    border-radius: 12px;
+    background: rgba(255, 69, 58, 0.03);
+    border: 1px solid rgba(255, 69, 58, 0.15);
+    color: var(--score-negative);
+    box-sizing: border-box;
+    box-shadow: inset 0 0 12px rgba(255, 69, 58, 0.05);
+    transition: all 0.3s ease;
+}
+
+.bisca-card.eliminated:hover .bisca-eliminated-vertical {
+    border-color: rgba(255, 69, 58, 0.4);
+    background: rgba(255, 69, 58, 0.06);
+    box-shadow: inset 0 0 15px rgba(255, 69, 58, 0.1), 0 0 10px rgba(255, 69, 58, 0.15);
+}
+
+.matrix-letters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1.1;
+    font-size: 13px;
+    letter-spacing: normal;
+}
+
+@keyframes matrix-glow {
+    0%, 100% {
+        opacity: 0.25;
+        text-shadow: none;
+        color: rgba(255, 69, 58, 0.5);
+    }
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 8px rgba(255, 69, 58, 0.8), 0 0 15px rgba(255, 69, 58, 0.5);
+        color: #ff453a;
+    }
+}
+
+.bisca-eliminated-vertical svg {
+    color: var(--score-negative) !important;
+    fill: none !important;
+    flex-shrink: 0;
+}
+
+
+
