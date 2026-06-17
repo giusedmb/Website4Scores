@@ -2230,3 +2230,271 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
         gap: 20px;
     }
 }
+
+/* ==========================================================================
+   DYNAMIC BISCA ACTIVE MODE LAYOUT
+   ========================================================================== */
+
+/* Remove body scroll on mobile only when Bisca active screen is shown */
+body.bisca-active-mode {
+    overflow: hidden;
+}
+
+body.bisca-active-mode #app {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Force app-content to fill remaining screen space when active game is Bisca */
+body.bisca-active-mode .app-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 86px - 65px - var(--safe-bottom));
+    padding: 16px;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+    body.bisca-active-mode .app-content {
+        height: 100%;
+        padding: 32px 48px;
+    }
+}
+
+.bisca-active-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 16px;
+}
+
+.bisca-participants-container {
+    display: grid;
+    gap: 16px;
+    flex: 1;
+    width: 100%;
+    min-height: 0; /* allows grid to shrink and not overflow */
+}
+
+/* Mobile layout (default) */
+.bisca-participants-container.bisca-grid-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+.bisca-participants-container.bisca-grid-2 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.bisca-participants-container.bisca-grid-3 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+.bisca-participants-container.bisca-grid-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.bisca-participants-container.bisca-grid-5,
+.bisca-participants-container.bisca-grid-6 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+.bisca-participants-container.bisca-grid-7,
+.bisca-participants-container.bisca-grid-8 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, 1fr);
+}
+.bisca-participants-container.bisca-grid-many {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: minmax(100px, 1fr);
+    overflow-y: auto;
+}
+
+/* Desktop layout overrides */
+@media (min-width: 1024px) {
+    .bisca-participants-container.bisca-grid-1 {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+    .bisca-participants-container.bisca-grid-2 {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+    }
+    .bisca-participants-container.bisca-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 1fr;
+    }
+    .bisca-participants-container.bisca-grid-4 {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    .bisca-participants-container.bisca-grid-5,
+    .bisca-participants-container.bisca-grid-6 {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 1fr 1fr;
+    }
+    .bisca-participants-container.bisca-grid-7,
+    .bisca-participants-container.bisca-grid-8 {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: 1fr 1fr;
+    }
+    .bisca-participants-container.bisca-grid-many {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-auto-rows: minmax(160px, 1fr);
+        overflow-y: auto;
+    }
+}
+
+/* Custom Card design for Bisca */
+.bisca-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-stroke);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.bisca-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.bisca-card.eliminated {
+    background-color: rgba(255, 59, 48, 0.04) !important;
+    border-color: rgba(255, 59, 48, 0.15) !important;
+    opacity: 0.6;
+}
+
+.bisca-card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.bisca-card-header h4 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bisca-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 100%;
+    margin: 12px 0;
+    min-height: 0; /* allows children to scale */
+}
+
+.bisca-card-controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Inside components styling */
+.bisca-eliminated-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--score-negative);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 6px 14px;
+    background: rgba(255, 69, 58, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 69, 58, 0.2);
+}
+
+.bisca-hearts-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 6px;
+    max-width: 90%;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.bisca-numeric-lives {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.bisca-adjuster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.bisca-adjuster .adjust-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.bisca-adjuster .adjust-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.bisca-adjuster .adjust-btn.minus {
+    color: var(--score-negative);
+    border-color: rgba(255, 69, 58, 0.2);
+}
+
+.bisca-adjuster .adjust-btn.plus {
+    color: var(--score-positive);
+    border-color: rgba(48, 209, 88, 0.2);
+}
+
+.bisca-value {
+    font-size: 26px;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+    min-width: 36px;
+    text-align: center;
+}
+

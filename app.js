@@ -615,6 +615,7 @@ const App = {
     },
 
     goBack() {
+        document.body.classList.remove('bisca-active-mode');
         Store.state.currentScreen = 'dashboard';
         Store.state.activeGameId = null;
         document.getElementById('main-header').classList.remove('hidden');
@@ -2389,6 +2390,7 @@ const App = {
     // 4. BISCA GAME LOGIC & RENDERING
     // ==========================================================================
     renderSetupBisca() {
+        document.body.classList.remove('bisca-active-mode');
         const container = document.getElementById('game-container');
         let maxLives = 5;
         const selectedIds = new Set();
@@ -2547,6 +2549,7 @@ const App = {
     },
 
     renderActiveBisca() {
+        document.body.classList.add('bisca-active-mode');
         const game = Store.state.biscaGame;
         const container = document.getElementById('game-container');
 
@@ -2569,8 +2572,9 @@ const App = {
             let heartsHTML = '';
             if (isElim) {
                 heartsHTML = `
-                    <div style="display:flex; align-items:center; gap:4px; font-size:12px; color:var(--score-negative); font-weight:bold;">
-                        <i data-lucide="heart-off" style="width:14px; height:14px;"></i> ELIMINATO
+                    <div class="bisca-eliminated-badge">
+                        <i data-lucide="heart-off" style="width:18px; height:18px;"></i>
+                        <span>ELIMINATO</span>
                     </div>
                 `;
             } else {
@@ -2579,14 +2583,15 @@ const App = {
                     let heartIcons = '';
                     for (let i = 0; i < Math.max(game.maxLives, p.lives); i++) {
                         const filled = i < p.lives;
-                        heartIcons += `<i data-lucide="heart" class="heart-icon" style="width:14px; height:14px; fill:${filled ? 'var(--score-negative)' : 'none'}; color:${filled ? 'var(--score-negative)' : 'rgba(255,255,255,0.12)'}; margin-right:2px;"></i>`;
+                        heartIcons += `<i data-lucide="heart" class="heart-icon" style="width:18px; height:18px; fill:${filled ? 'var(--score-negative)' : 'none'}; color:${filled ? 'var(--score-negative)' : 'rgba(255,255,255,0.15)'};"></i>`;
                     }
-                    heartsHTML = `<div style="display:flex;">${heartIcons}</div>`;
+                    heartsHTML = `<div class="bisca-hearts-wrap">${heartIcons}</div>`;
                 } else {
                     // Show numeric indicator
                     heartsHTML = `
-                        <div style="display:flex; align-items:center; gap:4px; font-size:12px; color:var(--text-secondary);">
-                            <i data-lucide="heart" style="width:14px; height:14px; fill:var(--score-negative); color:var(--score-negative)"></i> Vite: ${p.lives} / ${game.maxLives}
+                        <div class="bisca-numeric-lives">
+                            <i data-lucide="heart" style="width:20px; height:20px; fill:var(--score-negative); color:var(--score-negative)"></i>
+                            <span>Vite: ${p.lives} / ${game.maxLives}</span>
                         </div>
                     `;
                 }
@@ -2596,47 +2601,59 @@ const App = {
             if (isElim) {
                 // Revive button
                 controllerHTML = `
-                    <button class="btn-secondary btn-bisca-revive" data-id="${p.id}" style="width:auto; padding:6px 12px; border-color:rgba(46,204,113,0.3); color:var(--score-positive);">
-                        <i data-lucide="heart" style="width:12px;height:12px;fill:var(--score-positive)"></i> Resuscita
+                    <button class="btn-secondary btn-bisca-revive" data-id="${p.id}" style="width:100%; max-width:180px; padding:10px 16px; border-color:rgba(46,204,113,0.3); color:var(--score-positive); display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i data-lucide="heart" style="width:14px;height:14px;fill:var(--score-positive)"></i> Resuscita
                     </button>
                 `;
             } else {
                 controllerHTML = `
-                    <div class="score-adjuster">
+                    <div class="bisca-adjuster">
                         <button class="adjust-btn minus btn-bisca-minus" data-id="${p.id}">-</button>
-                        <span class="adjust-value" style="width:30px;">${p.lives}</span>
+                        <span class="bisca-value">${p.lives}</span>
                         <button class="adjust-btn plus btn-bisca-plus" data-id="${p.id}">+</button>
                     </div>
                 `;
             }
 
             listHTML += `
-                <div class="participant-card" style="background-color:${isElim ? 'rgba(255,59,48,0.04)' : 'var(--card-bg)'}; border-color:${isElim ? 'rgba(255,59,48,0.2)' : 'var(--card-stroke)'}; margin-bottom:12px; padding: 12px 16px;">
-                    <div class="participant-info">
-                        <h4 style="${isElim ? 'text-decoration: line-through; color:var(--score-negative);' : ''}">${p.name}</h4>
+                <div class="bisca-card ${isElim ? 'eliminated' : ''}">
+                    <div class="bisca-card-header">
+                        <h4>${p.name}</h4>
+                    </div>
+                    <div class="bisca-card-body">
                         ${heartsHTML}
                     </div>
-                    ${controllerHTML}
+                    <div class="bisca-card-controls">
+                        ${controllerHTML}
+                    </div>
                 </div>
             `;
         });
 
+        // Determine grid layout class based on number of players
+        let gridClass = 'bisca-grid-many';
+        if (totalCount <= 8) {
+            gridClass = `bisca-grid-${totalCount}`;
+        }
+
         container.innerHTML = `
-            <div class="game-view-header">
-                <button id="btn-active-back" class="btn-back"><i data-lucide="arrow-left"></i> Esci</button>
-                <div class="game-toolbar">
-                    <button id="btn-active-reset" class="btn-toolbar-circle"><i data-lucide="rotate-ccw"></i></button>
-                    <button id="btn-active-end" class="btn-toolbar-circle" style="color:var(--accent-red)"><i data-lucide="x-circle"></i></button>
+            <div class="bisca-active-layout">
+                <div class="game-view-header">
+                    <button id="btn-active-back" class="btn-back"><i data-lucide="arrow-left"></i> Esci</button>
+                    <div class="game-toolbar">
+                        <button id="btn-active-reset" class="btn-toolbar-circle"><i data-lucide="rotate-ccw"></i></button>
+                        <button id="btn-active-end" class="btn-toolbar-circle" style="color:var(--accent-red)"><i data-lucide="x-circle"></i></button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="info-capsules">
-                <span class="capsule">Giocatori in vita: ${activeCount} / ${totalCount}</span>
-                <span class="capsule right">Vite Max: ${game.maxLives}</span>
-            </div>
+                <div class="info-capsules">
+                    <span class="capsule">Giocatori in vita: ${activeCount} / ${totalCount}</span>
+                    <span class="capsule right">Vite Max: ${game.maxLives}</span>
+                </div>
 
-            <div class="participants-list" style="margin-top:16px;">
-                ${listHTML}
+                <div class="bisca-participants-container ${gridClass}">
+                    ${listHTML}
+                </div>
             </div>
         `;
 
