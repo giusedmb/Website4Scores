@@ -2597,7 +2597,7 @@ const App = {
                 // Revive button
                 controllerHTML = `
                     <button class="btn-secondary btn-bisca-revive" data-id="${p.id}" style="width:auto; padding:6px 12px; border-color:rgba(46,204,113,0.3); color:var(--score-positive);">
-                        <i data-lucide="plus" style="width:12px;height:12px;"></i> Riattiva
+                        <i data-lucide="heart" style="width:12px;height:12px;fill:var(--score-positive)"></i> Resuscita
                     </button>
                 `;
             } else {
@@ -3610,7 +3610,7 @@ const App = {
             if (isElim && !isFinished) {
                 reenterBtn = `
                     <button class="btn-reenter btn-scala-reenter" data-id="${p.id}">
-                        <i data-lucide="arrow-left-right"></i> Rientra
+                        <i data-lucide="heart"></i> Resuscita
                     </button>
                 `;
             }
@@ -3624,7 +3624,7 @@ const App = {
                     <div style="font-family:var(--font-heading); font-size:24px; font-weight:800; color:${isElim ? 'var(--text-secondary)' : (p.currentScore > game.targetScore - 20 ? 'var(--accent-orange)' : 'white')}">
                         ${p.currentScore} <span style="font-size:10px; font-weight:normal; color:var(--text-secondary);">/ ${game.targetScore} pt</span>
                     </div>
-                    ${p.reentriesCount > 0 ? `<span style="font-size:9px; color:var(--trophy-gold); font-weight:bold;">Rientri: ${p.reentriesCount}</span>` : ''}
+                    ${p.reentriesCount > 0 ? `<span style="font-size:9px; color:var(--trophy-gold); font-weight:bold;">Resurrezioni: ${p.reentriesCount}</span>` : ''}
                     ${reenterBtn}
                 </div>
             `;
