@@ -869,7 +869,13 @@ const App = {
                 bindToggles();
                 
                 const startBtn = document.getElementById('btn-start-game');
-                startBtn.disabled = false;
+                if (selectedIds.size >= 2) {
+                    startBtn.disabled = false;
+                    startBtn.classList.remove('disabled');
+                } else {
+                    startBtn.disabled = true;
+                    startBtn.classList.add('disabled');
+                }
             }
         };
 
@@ -1360,6 +1366,16 @@ const App = {
         };
 
         const bindSetupEvents = () => {
+            // Update start button state
+            const startBtn = document.getElementById('btn-start-game');
+            if (selectedIds.size === 2) {
+                startBtn.disabled = false;
+                startBtn.classList.remove('disabled');
+            } else {
+                startBtn.disabled = true;
+                startBtn.classList.add('disabled');
+            }
+
             // Target options
             container.querySelectorAll('.scopa-target-opt').forEach(btn => {
                 btn.onclick = () => {
@@ -1412,15 +1428,6 @@ const App = {
                     document.getElementById('setup-players-list-container').innerHTML = buildList();
                     lucide.createIcons();
                     bindSetupEvents();
-                    
-                    const startBtn = document.getElementById('btn-start-game');
-                    if (selectedIds.size === 2) {
-                        startBtn.disabled = false;
-                        startBtn.classList.remove('disabled');
-                    } else {
-                        startBtn.disabled = true;
-                        startBtn.classList.add('disabled');
-                    }
                 };
             });
 
@@ -1974,6 +1981,16 @@ const App = {
         };
 
         const bindSetupEvents = () => {
+            // Update start button state
+            const startBtn = document.getElementById('btn-start-game');
+            if (selectedIds.size === 2) {
+                startBtn.disabled = false;
+                startBtn.classList.remove('disabled');
+            } else {
+                startBtn.disabled = true;
+                startBtn.classList.add('disabled');
+            }
+
             // Format options
             container.querySelectorAll('.briscola-format-opt').forEach(btn => {
                 btn.onclick = () => {
@@ -2005,15 +2022,6 @@ const App = {
                     document.getElementById('setup-players-list-container').innerHTML = buildList();
                     lucide.createIcons();
                     bindSetupEvents();
-                    
-                    const startBtn = document.getElementById('btn-start-game');
-                    if (selectedIds.size === 2) {
-                        startBtn.disabled = false;
-                        startBtn.classList.remove('disabled');
-                    } else {
-                        startBtn.disabled = true;
-                        startBtn.classList.add('disabled');
-                    }
                 };
             });
 
@@ -2445,6 +2453,16 @@ const App = {
         };
 
         const bindSetupEvents = () => {
+            // Update start button state
+            const startBtn = document.getElementById('btn-start-game');
+            if (selectedIds.size >= 2) {
+                startBtn.disabled = false;
+                startBtn.classList.remove('disabled');
+            } else {
+                startBtn.disabled = true;
+                startBtn.classList.add('disabled');
+            }
+
             // Live options
             container.querySelectorAll('.bisca-lives-opt').forEach(btn => {
                 btn.onclick = () => {
@@ -2486,15 +2504,6 @@ const App = {
                     document.getElementById('setup-players-list-container').innerHTML = buildList();
                     lucide.createIcons();
                     bindSetupEvents();
-                    
-                    const startBtn = document.getElementById('btn-start-game');
-                    if (selectedIds.size >= 2) {
-                        startBtn.disabled = false;
-                        startBtn.classList.remove('disabled');
-                    } else {
-                        startBtn.disabled = true;
-                        startBtn.classList.add('disabled');
-                    }
                 };
             });
 
@@ -2806,6 +2815,16 @@ const App = {
         };
 
         const bindSetupEvents = () => {
+            // Update start button state
+            const startBtn = document.getElementById('btn-start-game');
+            if (selectedIds.size >= 2 && selectedIds.size <= 3) {
+                startBtn.disabled = false;
+                startBtn.classList.remove('disabled');
+            } else {
+                startBtn.disabled = true;
+                startBtn.classList.add('disabled');
+            }
+
             // Target options
             container.querySelectorAll('.cp-target-opt').forEach(btn => {
                 btn.onclick = () => {
@@ -2863,15 +2882,6 @@ const App = {
                     document.getElementById('setup-players-list-container').innerHTML = buildList();
                     lucide.createIcons();
                     bindSetupEvents();
-                    
-                    const startBtn = document.getElementById('btn-start-game');
-                    if (selectedIds.size >= 2 && selectedIds.size <= 3) {
-                        startBtn.disabled = false;
-                        startBtn.classList.remove('disabled');
-                    } else {
-                        startBtn.disabled = true;
-                        startBtn.classList.add('disabled');
-                    }
                 };
             });
 
@@ -3486,6 +3496,16 @@ const App = {
         };
 
         const bindSetupEvents = () => {
+            // Update start button state
+            const startBtn = document.getElementById('btn-start-game');
+            if (selectedIds.size >= 2) {
+                startBtn.disabled = false;
+                startBtn.classList.remove('disabled');
+            } else {
+                startBtn.disabled = true;
+                startBtn.classList.add('disabled');
+            }
+
             // Target options
             container.querySelectorAll('.sq-target-opt').forEach(btn => {
                 btn.onclick = () => {
@@ -3527,15 +3547,6 @@ const App = {
                     document.getElementById('setup-players-list-container').innerHTML = buildList();
                     lucide.createIcons();
                     bindSetupEvents();
-                    
-                    const startBtn = document.getElementById('btn-start-game');
-                    if (selectedIds.size >= 2) {
-                        startBtn.disabled = false;
-                        startBtn.classList.remove('disabled');
-                    } else {
-                        startBtn.disabled = true;
-                        startBtn.classList.add('disabled');
-                    }
                 };
             });
 
