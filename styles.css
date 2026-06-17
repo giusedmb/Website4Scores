@@ -2525,39 +2525,40 @@ body.bisca-active-mode .app-content {
     text-align: center;
 }
 
-/* Vertical matrix ELIMINATO badge */
-.bisca-eliminated-vertical {
+/* Horizontal matrix ELIMINATO badge */
+.bisca-eliminated-horizontal {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    width: 44px; /* Same as the height of the Resuscita button */
-    height: 180px; /* Same as the max-width of the Resuscita button */
-    padding: 14px 6px;
-    border-radius: 12px;
-    background: rgba(255, 69, 58, 0.03);
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(255, 69, 58, 0.04);
     border: 1px solid rgba(255, 69, 58, 0.15);
     color: var(--score-negative);
     box-sizing: border-box;
     box-shadow: inset 0 0 12px rgba(255, 69, 58, 0.05);
     transition: all 0.3s ease;
+    width: auto;
+    max-width: 100%;
 }
 
-.bisca-card.eliminated:hover .bisca-eliminated-vertical {
+.bisca-card.eliminated:hover .bisca-eliminated-horizontal {
     border-color: rgba(255, 69, 58, 0.4);
     background: rgba(255, 69, 58, 0.06);
     box-shadow: inset 0 0 15px rgba(255, 69, 58, 0.1), 0 0 10px rgba(255, 69, 58, 0.15);
 }
 
-.matrix-letters {
+.matrix-letters-horizontal {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 2px;
-    line-height: 1.1;
-    font-size: 13px;
-    letter-spacing: normal;
+    gap: 3px;
+    line-height: 1;
+    font-size: 14px;
+    letter-spacing: 1.5px;
 }
 
 @keyframes matrix-glow {
@@ -2573,7 +2574,7 @@ body.bisca-active-mode .app-content {
     }
 }
 
-.bisca-eliminated-vertical svg {
+.bisca-eliminated-horizontal svg {
     color: var(--score-negative) !important;
     fill: none !important;
     flex-shrink: 0;

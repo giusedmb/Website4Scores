@@ -2602,9 +2602,9 @@ const App = {
                     `<span style="animation: matrix-glow 1.8s infinite; animation-delay: ${i * 0.15}s; font-family: monospace, sans-serif; font-weight: 900;">${l}</span>`
                 ).join("");
                 heartsHTML = `
-                    <div class="bisca-eliminated-vertical">
+                    <div class="bisca-eliminated-horizontal">
                         <i data-lucide="heart-off" style="width:14px; height:14px; color: var(--score-negative);"></i>
-                        <div class="matrix-letters">
+                        <div class="matrix-letters-horizontal">
                             ${lettersHTML}
                         </div>
                     </div>
