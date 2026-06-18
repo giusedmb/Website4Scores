@@ -3309,8 +3309,30 @@ const App = {
         game.players.forEach(p => {
             const sc = round.scopeScores ? (round.scopeScores[p.id] || 0) : 0;
             const ex = round.extraScores ? (round.extraScores[p.id] || 0) : 0;
+            
             if (sc > 0) scopeTexts.push(`${p.name} (${sc})`);
-            if (ex > 0) extraTexts.push(`${p.name} (+${ex})`);
+            
+            if (ex > 0) {
+                const parts = [];
+                const cop = round.coppiaState ? (round.coppiaState[p.id] || 0) : 0;
+                const m9 = round.menoDiNoveState ? (round.menoDiNoveState[p.id] || 0) : 0;
+                
+                const copCount = typeof cop === 'boolean' ? (cop ? 1 : 0) : Number(cop) || 0;
+                const m9Count = typeof m9 === 'boolean' ? (m9 ? 1 : 0) : Number(m9) || 0;
+                
+                if (copCount > 0) parts.push(`${copCount} Coppia`);
+                if (m9Count > 0) parts.push(`${m9Count} Meno di 9`);
+                
+                const calculatedFromBonuses = (copCount * 3) + (m9Count * 2);
+                const diff = ex - calculatedFromBonuses;
+                if (diff > 0) parts.push(`+${diff} Altri`);
+                
+                if (parts.length > 0) {
+                    extraTexts.push(`${p.name} (+${ex}: ${parts.join(', ')})`);
+                } else {
+                    extraTexts.push(`${p.name} (+${ex})`);
+                }
+            }
         });
 
         let out = '';
@@ -3331,11 +3353,27 @@ const App = {
         const extraScores = {};
         const coppiaState = {};
         const menoDiNoveState = {};
+        const altriExtraScores = {};
         game.players.forEach(p => {
             scopeScores[p.id] = (roundToEdit && roundToEdit.scopeScores) ? Number(roundToEdit.scopeScores[p.id] || 0) : 0;
             extraScores[p.id] = (roundToEdit && roundToEdit.extraScores) ? Number(roundToEdit.extraScores[p.id] || 0) : 0;
-            coppiaState[p.id] = (roundToEdit && roundToEdit.coppiaState) ? !!roundToEdit.coppiaState[p.id] : false;
-            menoDiNoveState[p.id] = (roundToEdit && roundToEdit.menoDiNoveState) ? !!roundToEdit.menoDiNoveState[p.id] : false;
+            
+            let copCount = 0;
+            if (roundToEdit && roundToEdit.coppiaState) {
+                const val = roundToEdit.coppiaState[p.id];
+                copCount = (typeof val === 'boolean') ? (val ? 1 : 0) : (Number(val) || 0);
+            }
+            coppiaState[p.id] = copCount;
+
+            let m9Count = 0;
+            if (roundToEdit && roundToEdit.menoDiNoveState) {
+                const val = roundToEdit.menoDiNoveState[p.id];
+                m9Count = (typeof val === 'boolean') ? (val ? 1 : 0) : (Number(val) || 0);
+            }
+            menoDiNoveState[p.id] = m9Count;
+
+            const calculatedBonuses = (copCount * 3) + (m9Count * 2);
+            altriExtraScores[p.id] = Math.max(0, extraScores[p.id] - calculatedBonuses);
         });
 
         let primieraDetails = roundToEdit ? roundToEdit.primieraDetails : null;
@@ -3345,7 +3383,6 @@ const App = {
         };
 
         const renderBody = () => {
-            // Build players selectors buttons dynamically for 2 or 3 players
             const renderSelectors = (title, field, activeVal, buttonClass, colorClass, titleClass) => {
                 let btnsHTML = '';
                 game.players.forEach(p => {
@@ -3353,7 +3390,6 @@ const App = {
                 });
                 btnsHTML += `<button class="selector-btn ${buttonClass} ${!activeVal ? 'active' : ''}" data-val="none">Nessuno</button>`;
                 
-                // Add calculation button only for Primiera selector
                 const calcBtn = field === 'primiera' ? `<button id="btn-calc-primiera" class="btn-calc green">Calcola</button>` : '';
 
                 return `
@@ -3369,16 +3405,18 @@ const App = {
                 `;
             };
 
-            // Build Scope and Extra counter list
             let countersScopeHTML = '';
+            game.players.forEach((p, idx) => {
+                const isLast = idx === game.players.length - 1;
+                countersScopeHTML += renderScopeRow(p, isLast);
+            });
+
             let countersExtraHTML = '';
             game.players.forEach((p, idx) => {
                 const isLast = idx === game.players.length - 1;
-                countersScopeHTML += renderCounterRow('scope', p, isLast);
-                countersExtraHTML += renderCounterRow('extra', p, isLast);
+                countersExtraHTML += renderExtraRow(p, isLast);
             });
 
-            // Build live preview
             let previewColsHTML = '';
             game.players.forEach((p, idx) => {
                 const pts = calcLivePoints(p.id);
@@ -3407,7 +3445,7 @@ const App = {
                     ${countersScopeHTML}
                 </div>
 
-                <span class="form-section-title">PUNTI EXTRA</span>
+                <span class="form-section-title">BONUS E PUNTI EXTRA</span>
                 <div class="settings-card" style="padding: 8px 16px; margin-bottom:16px;">
                     ${countersExtraHTML}
                 </div>
@@ -3425,35 +3463,64 @@ const App = {
             bindModalEvents();
         };
 
-        const renderCounterRow = (type, player, isLast) => {
-            const val = type === 'scope' ? scopeScores[player.id] : extraScores[player.id];
-            
-            let extraControlsHTML = '';
-            if (type === 'extra') {
-                const isCoppiaActive = coppiaState[player.id] ? 'active' : '';
-                const isMeno9Active = menoDiNoveState[player.id] ? 'active' : '';
-                
-                extraControlsHTML = `
-                    <div class="quick-extra-row" style="display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; width: 100%;">
-                        <button class="btn-quick-extra btn-quick-coppia ${isCoppiaActive}" data-pid="${player.id}" style="flex: 1;">Coppia (+3)</button>
-                        <button class="btn-quick-extra btn-quick-meno9 ${isMeno9Active}" data-pid="${player.id}" style="flex: 1;">Meno di 9 (+2)</button>
-                    </div>
-                `;
-            }
-
+        const renderScopeRow = (player, isLast) => {
+            const val = scopeScores[player.id];
             const borderStyle = isLast ? '' : 'border-bottom: 1px solid var(--card-stroke);';
-
             return `
-                <div class="counter-row-wrapper" style="display: flex; flex-direction: column; ${borderStyle} padding: 10px 0; width: 100%;">
-                    <div class="counter-row" style="border-bottom: none; padding: 4px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <span class="counter-row-title">${player.name}</span>
-                        <div class="counter-controls" style="display: flex; align-items: center; gap: 12px;">
-                            <button class="counter-btn minus" data-type="${type}" data-pid="${player.id}">-</button>
-                            <span class="counter-value" id="val-${type}-${player.id}">${val}</span>
-                            <button class="counter-btn plus" data-type="${type}" data-pid="${player.id}">+</button>
+                <div class="counter-row" style="${borderStyle} padding: 10px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <span class="counter-row-title">${player.name}</span>
+                    <div class="counter-controls" style="display: flex; align-items: center; gap: 12px;">
+                        <button class="counter-btn minus" data-type="scope" data-pid="${player.id}">-</button>
+                        <span class="counter-value" id="val-scope-${player.id}">${val}</span>
+                        <button class="counter-btn plus" data-type="scope" data-pid="${player.id}">+</button>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderExtraRow = (player, isLast) => {
+            const borderStyle = isLast ? '' : 'border-bottom: 1px solid var(--card-stroke);';
+            const copCount = coppiaState[player.id];
+            const m9Count = menoDiNoveState[player.id];
+            
+            return `
+                <div class="player-extra-section" style="${borderStyle} padding: 10px 0; width: 100%;">
+                    <div style="font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--text-primary);">${player.name}</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                            <!-- Coppia Button Group -->
+                            <div class="quick-extra-group">
+                                <button class="btn-quick-extra btn-quick-coppia ${copCount > 0 ? 'active' : ''}" data-pid="${player.id}">
+                                    <span>Coppia (+3)</span>
+                                    <span class="badge" id="badge-coppia-${player.id}">${copCount > 0 ? `x${copCount}` : ''}</span>
+                                </button>
+                                <button class="btn-quick-extra-minus btn-coppia-minus" data-pid="${player.id}" style="${copCount > 0 ? '' : 'display: none;'}">
+                                    <i data-lucide="minus"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Meno di 9 Button Group -->
+                            <div class="quick-extra-group">
+                                <button class="btn-quick-extra btn-quick-meno9 ${m9Count > 0 ? 'active' : ''}" data-pid="${player.id}">
+                                    <span>Meno di 9 (+2)</span>
+                                    <span class="badge" id="badge-meno9-${player.id}">${m9Count > 0 ? `x${m9Count}` : ''}</span>
+                                </button>
+                                <button class="btn-quick-extra-minus btn-meno9-minus" data-pid="${player.id}" style="${m9Count > 0 ? '' : 'display: none;'}">
+                                    <i data-lucide="minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Other/Manual Extra points -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-secondary); padding: 4px 0;">
+                            <span>Altri punti extra (manuale)</span>
+                            <div class="counter-controls" style="display: flex; align-items: center; gap: 8px;">
+                                <button class="counter-btn minus" data-type="altri-extra" data-pid="${player.id}">-</button>
+                                <span class="counter-value" id="val-altri-extra-${player.id}" style="min-width: 16px; text-align: center; font-weight: bold; color: var(--text-primary);">${altriExtraScores[player.id]}</span>
+                                <button class="counter-btn plus" data-type="altri-extra" data-pid="${player.id}">+</button>
+                            </div>
                         </div>
                     </div>
-                    ${extraControlsHTML}
                 </div>
             `;
         };
@@ -3485,7 +3552,6 @@ const App = {
         };
 
         const bindModalEvents = () => {
-            // Selectors bind
             const bindGroup = (className, callback) => {
                 const btnList = document.querySelectorAll(className);
                 btnList.forEach(btn => {
@@ -3505,48 +3571,95 @@ const App = {
             bindGroup('.cp-cart-sel', val => carteWinnerId = val);
             bindGroup('.cp-den-sel', val => denariWinnerId = val);
 
-            // Quick extra buttons click handlers
+            const recalculateExtraTotal = (pid) => {
+                const copVal = coppiaState[pid] || 0;
+                const m9Val = menoDiNoveState[pid] || 0;
+                const altriVal = altriExtraScores[pid] || 0;
+                extraScores[pid] = (copVal * 3) + (m9Val * 2) + altriVal;
+                updateLivePreviews();
+            };
+
+            // Quick extra buttons click handlers: Coppia Plus
             document.querySelectorAll('.btn-quick-coppia').forEach(btn => {
                 btn.onclick = () => {
                     const pid = btn.dataset.pid;
                     triggerHaptic('light');
                     
-                    // Toggle state
-                    coppiaState[pid] = !coppiaState[pid];
+                    coppiaState[pid] = (coppiaState[pid] || 0) + 1;
                     
-                    if (coppiaState[pid]) {
-                        btn.classList.add('active');
-                        extraScores[pid] += 3;
-                    } else {
-                        btn.classList.remove('active');
-                        extraScores[pid] = Math.max(0, extraScores[pid] - 3);
-                    }
+                    btn.classList.add('active');
+                    const badge = btn.querySelector('.badge');
+                    if (badge) badge.textContent = `x${coppiaState[pid]}`;
                     
-                    // Update counter display
-                    document.getElementById(`val-extra-${pid}`).textContent = extraScores[pid];
-                    updateLivePreviews();
+                    const minusBtn = btn.parentElement.querySelector('.btn-coppia-minus');
+                    if (minusBtn) minusBtn.style.display = '';
+                    
+                    recalculateExtraTotal(pid);
                 };
             });
 
+            // Coppia Minus
+            document.querySelectorAll('.btn-coppia-minus').forEach(btn => {
+                btn.onclick = () => {
+                    const pid = btn.dataset.pid;
+                    triggerHaptic('light');
+                    
+                    coppiaState[pid] = Math.max(0, (coppiaState[pid] || 0) - 1);
+                    
+                    const mainBtn = btn.parentElement.querySelector('.btn-quick-coppia');
+                    const badge = mainBtn ? mainBtn.querySelector('.badge') : null;
+                    
+                    if (coppiaState[pid] === 0) {
+                        if (mainBtn) mainBtn.classList.remove('active');
+                        if (badge) badge.textContent = '';
+                        btn.style.display = 'none';
+                    } else {
+                        if (badge) badge.textContent = `x${coppiaState[pid]}`;
+                    }
+                    
+                    recalculateExtraTotal(pid);
+                };
+            });
+
+            // Meno di 9 Plus
             document.querySelectorAll('.btn-quick-meno9').forEach(btn => {
                 btn.onclick = () => {
                     const pid = btn.dataset.pid;
                     triggerHaptic('light');
                     
-                    // Toggle state
-                    menoDiNoveState[pid] = !menoDiNoveState[pid];
+                    menoDiNoveState[pid] = (menoDiNoveState[pid] || 0) + 1;
                     
-                    if (menoDiNoveState[pid]) {
-                        btn.classList.add('active');
-                        extraScores[pid] += 2;
+                    btn.classList.add('active');
+                    const badge = btn.querySelector('.badge');
+                    if (badge) badge.textContent = `x${menoDiNoveState[pid]}`;
+                    
+                    const minusBtn = btn.parentElement.querySelector('.btn-meno9-minus');
+                    if (minusBtn) minusBtn.style.display = '';
+                    
+                    recalculateExtraTotal(pid);
+                };
+            });
+
+            // Meno di 9 Minus
+            document.querySelectorAll('.btn-meno9-minus').forEach(btn => {
+                btn.onclick = () => {
+                    const pid = btn.dataset.pid;
+                    triggerHaptic('light');
+                    
+                    menoDiNoveState[pid] = Math.max(0, (menoDiNoveState[pid] || 0) - 1);
+                    
+                    const mainBtn = btn.parentElement.querySelector('.btn-quick-meno9');
+                    const badge = mainBtn ? mainBtn.querySelector('.badge') : null;
+                    
+                    if (menoDiNoveState[pid] === 0) {
+                        if (mainBtn) mainBtn.classList.remove('active');
+                        if (badge) badge.textContent = '';
+                        btn.style.display = 'none';
                     } else {
-                        btn.classList.remove('active');
-                        extraScores[pid] = Math.max(0, extraScores[pid] - 2);
+                        if (badge) badge.textContent = `x${menoDiNoveState[pid]}`;
                     }
                     
-                    // Update counter display
-                    document.getElementById(`val-extra-${pid}`).textContent = extraScores[pid];
-                    updateLivePreviews();
+                    recalculateExtraTotal(pid);
                 };
             });
 
@@ -3556,9 +3669,14 @@ const App = {
                     const type = btn.dataset.type;
                     const pid = btn.dataset.pid;
                     triggerHaptic('light');
-                    if (type === 'scope') scopeScores[pid]++;
-                    else extraScores[pid]++;
-                    document.getElementById(`val-${type}-${pid}`).textContent = type === 'scope' ? scopeScores[pid] : extraScores[pid];
+                    if (type === 'scope') {
+                        scopeScores[pid]++;
+                        document.getElementById(`val-scope-${pid}`).textContent = scopeScores[pid];
+                    } else if (type === 'altri-extra') {
+                        altriExtraScores[pid]++;
+                        document.getElementById(`val-altri-extra-${pid}`).textContent = altriExtraScores[pid];
+                        recalculateExtraTotal(pid);
+                    }
                     updateLivePreviews();
                 };
             });
@@ -3569,11 +3687,17 @@ const App = {
                     const pid = btn.dataset.pid;
                     triggerHaptic('light');
                     if (type === 'scope') {
-                        if (scopeScores[pid] > 0) scopeScores[pid]--;
-                    } else {
-                        if (extraScores[pid] > 0) extraScores[pid]--;
+                        if (scopeScores[pid] > 0) {
+                            scopeScores[pid]--;
+                            document.getElementById(`val-scope-${pid}`).textContent = scopeScores[pid];
+                        }
+                    } else if (type === 'altri-extra') {
+                        if (altriExtraScores[pid] > 0) {
+                            altriExtraScores[pid]--;
+                            document.getElementById(`val-altri-extra-${pid}`).textContent = altriExtraScores[pid];
+                            recalculateExtraTotal(pid);
+                        }
                     }
-                    document.getElementById(`val-${type}-${pid}`).textContent = type === 'scope' ? scopeScores[pid] : extraScores[pid];
                     updateLivePreviews();
                 };
             });
@@ -3582,7 +3706,6 @@ const App = {
             document.getElementById('btn-calc-primiera').onclick = () => {
                 triggerHaptic('light');
                 
-                // Primiera calculator mapping players array
                 const mappedPlayers = game.players.map(p => ({ id: p.id, name: p.name }));
                 
                 PrimieraCalc.init(
