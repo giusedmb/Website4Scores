@@ -2747,12 +2747,112 @@ const App = {
             btn.onclick = () => {
                 const id = btn.dataset.id;
                 const p = game.players.find(x => x.id === id);
-                if (p) {
-                    p.lives = 1; // set lives to 1 to bring back
-                    triggerHaptic('success');
-                    Store.save();
-                    this.renderActiveBisca();
+                if (!p) return;
+
+                // Trova gli altri giocatori in vita con almeno 2 vite (altrimenti donando morirebbero anche loro)
+                const donors = game.players.filter(x => x.id !== p.id && x.lives > 1);
+
+                if (donors.length === 0) {
+                    triggerHaptic('error');
+                    openOverlay("Dona una Vita", `
+                        <div style="text-align:center; padding:10px 0;">
+                            <i data-lucide="heart-off" style="width:48px; height:48px; color:var(--accent-red); margin-bottom:12px;"></i>
+                            <p style="margin-bottom:20px; font-size:1.05em; color:var(--text-secondary);">
+                                Nessun giocatore ha abbastanza vite da donare (è necessario avere almeno 2 vite per poterne donare una).
+                            </p>
+                            <button id="btn-cancel-revive" class="btn-secondary" style="width:100%; padding:14px; border-radius:12px;">Chiudi</button>
+                        </div>
+                    `);
+                    document.getElementById('btn-cancel-revive').onclick = () => {
+                        closeOverlay();
+                    };
+                    return;
                 }
+
+                // Render donor selection modal
+                let optionsHTML = `
+                    <p style="margin-bottom: 20px; font-size: 1em; color: var(--text-secondary); text-align: center; line-height: 1.4;">
+                        Scegli quale giocatore donerà una vita a <strong>${p.name}</strong> per farlo rientrare in gioco:
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+                `;
+
+                donors.forEach(d => {
+                    optionsHTML += `
+                        <button class="btn-donor-select-item" data-donor-id="${d.id}" style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            width: 100%;
+                            padding: 16px 20px;
+                            background: rgba(255, 255, 255, 0.04);
+                            border: 1px solid rgba(255, 255, 255, 0.08);
+                            border-radius: 14px;
+                            color: var(--text-primary);
+                            font-size: 1.05em;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                        ">
+                            <span style="display:flex; align-items:center; gap:10px;">
+                                <i data-lucide="user" style="width:18px; height:18px; color: var(--accent-blue);"></i>
+                                ${d.name}
+                            </span>
+                            <span style="color: var(--score-positive); display:flex; align-items:center; gap:6px; font-size: 0.95em;">
+                                ${d.lives} <i data-lucide="arrow-right" style="width:14px; height:14px; color: var(--text-secondary);"></i> ${d.lives - 1} <i data-lucide="heart" style="width:16px; height:16px; fill:var(--score-negative); color:var(--score-negative)"></i>
+                            </span>
+                        </button>
+                    `;
+                });
+
+                optionsHTML += `
+                    </div>
+                    <button id="btn-cancel-revive" class="btn-secondary" style="width:100%; padding:14px; border-radius:12px; font-size: 15px;">Annulla</button>
+                `;
+
+                openOverlay("Dona una Vita", optionsHTML);
+
+                // Aggiunge lo stile hover per i bottoni dinamicamente se non già presente
+                const styleId = 'donor-select-item-styles';
+                if (!document.getElementById(styleId)) {
+                    const styleEl = document.createElement('style');
+                    styleEl.id = styleId;
+                    styleEl.textContent = `
+                        .btn-donor-select-item:hover {
+                            background: rgba(255, 255, 255, 0.08) !important;
+                            border-color: var(--accent-blue) !important;
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+                        }
+                        .btn-donor-select-item:active {
+                            transform: translateY(0) scale(0.98);
+                        }
+                    `;
+                    document.head.appendChild(styleEl);
+                }
+
+                // Bind dei click
+                const modalContainer = document.getElementById('modal-container');
+                modalContainer.querySelectorAll('.btn-donor-select-item').forEach(itemBtn => {
+                    itemBtn.onclick = () => {
+                        const donorId = itemBtn.dataset.donorId;
+                        const donor = game.players.find(x => x.id === donorId);
+                        if (donor && donor.lives > 1) {
+                            donor.lives--;
+                            p.lives = 1;
+                            
+                            triggerHaptic('success');
+                            Store.save();
+                            closeOverlay();
+                            this.renderActiveBisca();
+                            showToast(`${donor.name} ha donato una vita a ${p.name}!`, "success");
+                        }
+                    };
+                });
+
+                document.getElementById('btn-cancel-revive').onclick = () => {
+                    closeOverlay();
+                };
             };
         });
     },
