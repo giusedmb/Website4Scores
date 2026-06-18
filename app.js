@@ -1752,7 +1752,7 @@ const App = {
 
                 <!-- Live preview -->
                 <span class="form-section-title">ANTEPRIMA PUNTI ROUND</span>
-                <div class="dual-scoreboard" style="padding: 12px; margin-bottom: 20px;">
+                <div class="dual-scoreboard live-preview-scoreboard" style="padding: 12px; margin-bottom: 20px;">
                     <div class="score-column">
                         <span class="name" style="font-size:12px;">${p1.name}</span>
                         <span class="score-num" style="font-size:24px; color:var(--score-positive);">+${calcLivePoints(p1.id)}</span>
@@ -1797,8 +1797,13 @@ const App = {
         };
 
         const updateLivePreviews = () => {
-            document.querySelector('.dual-scoreboard .score-column:first-child .score-num').textContent = `+${calcLivePoints(p1.id)}`;
-            document.querySelector('.dual-scoreboard .score-column:last-child .score-num').textContent = `+${calcLivePoints(p2.id)}`;
+            const previewScoreboard = document.querySelector('.live-preview-scoreboard');
+            if (previewScoreboard) {
+                const firstScoreNum = previewScoreboard.querySelector('.score-column:first-child .score-num');
+                const lastScoreNum = previewScoreboard.querySelector('.score-column:last-child .score-num');
+                if (firstScoreNum) firstScoreNum.textContent = `+${calcLivePoints(p1.id)}`;
+                if (lastScoreNum) lastScoreNum.textContent = `+${calcLivePoints(p2.id)}`;
+            }
         };
 
         const bindModalEvents = () => {
@@ -3373,7 +3378,7 @@ const App = {
 
                 <!-- Live preview -->
                 <span class="form-section-title">ANTEPRIMA PUNTI ROUND</span>
-                <div class="dual-scoreboard" style="padding: 12px; margin-bottom: 20px;">
+                <div class="dual-scoreboard live-preview-scoreboard" style="padding: 12px; margin-bottom: 20px;">
                     ${previewColsHTML}
                 </div>
 
@@ -3410,12 +3415,18 @@ const App = {
         };
 
         const updateLivePreviews = () => {
-            game.players.forEach((p, idx) => {
-                const cols = document.querySelectorAll('.dual-scoreboard .score-column');
-                if (cols[idx]) {
-                    cols[idx].querySelector('.score-num').textContent = `+${calcLivePoints(p.id)}`;
-                }
-            });
+            const previewScoreboard = document.querySelector('.live-preview-scoreboard');
+            if (previewScoreboard) {
+                const cols = previewScoreboard.querySelectorAll('.score-column');
+                game.players.forEach((p, idx) => {
+                    if (cols[idx]) {
+                        const scoreNum = cols[idx].querySelector('.score-num');
+                        if (scoreNum) {
+                            scoreNum.textContent = `+${calcLivePoints(p.id)}`;
+                        }
+                    }
+                });
+            }
         };
 
         const bindModalEvents = () => {
