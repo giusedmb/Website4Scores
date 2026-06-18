@@ -22,6 +22,12 @@
     --trophy-gold: #ffd60a;
     --score-positive: #30d158;
     --score-negative: #ff453a;
+
+    /* Card Suit Specific Accents */
+    --accent-denari: var(--trophy-gold);
+    --accent-coppe: var(--accent-red);
+    --accent-spade: var(--accent-blue);
+    --accent-bastoni: var(--accent-green);
     
     /* Typography */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -1660,7 +1666,7 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     color: white;
 }
 
-.rank-btn.selected.denari { background-color: var(--accent-orange); border-color: var(--accent-orange); }
+.rank-btn.selected.denari { background-color: var(--trophy-gold); border-color: var(--trophy-gold); color: #07080b; }
 .rank-btn.selected.coppe { background-color: var(--accent-red); border-color: var(--accent-red); }
 .rank-btn.selected.spade { background-color: var(--accent-blue); border-color: var(--accent-blue); }
 .rank-btn.selected.bastoni { background-color: var(--accent-green); border-color: var(--accent-green); }
@@ -2588,6 +2594,130 @@ body.bisca-active-mode .app-content {
     body.game-active #app {
         padding-bottom: var(--safe-bottom) !important;
     }
+}
+
+/* Custom styles for Settebello & Denari enhancements */
+.selector-btn.active.settebello {
+    background: linear-gradient(135deg, #ffd60a, #ff9f0a) !important;
+    color: #07080b !important;
+    border-color: #ffd60a !important;
+    box-shadow: 0 0 10px rgba(255, 214, 10, 0.3);
+    font-weight: 800;
+}
+
+.selector-btn.active.denari {
+    background: linear-gradient(135deg, #ff9f0a, #ffc700) !important;
+    color: #07080b !important;
+    border-color: #ff9f0a !important;
+    box-shadow: 0 0 10px rgba(255, 159, 10, 0.3);
+    font-weight: 800;
+}
+
+.selector-row-title.title-settebello {
+    color: var(--trophy-gold) !important;
+    font-weight: 800;
+}
+
+.selector-row-title.title-denari {
+    color: var(--accent-orange) !important;
+    font-weight: 800;
+}
+
+.small-badge.badge-settebello {
+    background-color: rgba(255, 214, 10, 0.12) !important;
+    border: 1px solid rgba(255, 214, 10, 0.35) !important;
+    color: var(--trophy-gold) !important;
+    font-weight: 800 !important;
+    box-shadow: 0 0 6px rgba(255, 214, 10, 0.1);
+}
+
+.small-badge.badge-settebello.p1-win {
+    border-color: rgba(255, 159, 10, 0.6) !important;
+}
+
+.small-badge.badge-settebello.p2-win {
+    border-color: rgba(0, 136, 255, 0.6) !important;
+}
+
+.small-badge.badge-settebello.p3-win {
+    border-color: rgba(48, 209, 88, 0.6) !important;
+}
+
+.small-badge.badge-denari {
+    background-color: rgba(255, 159, 10, 0.12) !important;
+    border: 1px solid rgba(255, 159, 10, 0.35) !important;
+    color: var(--accent-orange) !important;
+    font-weight: 800 !important;
+}
+
+.small-badge.badge-denari.p1-win {
+    border-color: rgba(255, 159, 10, 0.6) !important;
+}
+
+.small-badge.badge-denari.p2-win {
+    border-color: rgba(0, 136, 255, 0.6) !important;
+}
+
+.small-badge.badge-denari.p3-win {
+    border-color: rgba(48, 209, 88, 0.6) !important;
+}
+
+.badge-player-p1 {
+    color: var(--accent-orange) !important;
+}
+.badge-player-p2 {
+    color: var(--accent-blue) !important;
+}
+.badge-player-p3 {
+    color: var(--accent-green) !important;
+}
+
+.rank-btn.settebello-btn {
+    border-color: var(--trophy-gold) !important;
+    box-shadow: 0 0 8px rgba(255, 214, 10, 0.15);
+}
+.rank-btn.settebello-btn:not(.selected) {
+    color: var(--trophy-gold) !important;
+    background-color: rgba(255, 214, 10, 0.05) !important;
+}
+.rank-btn.settebello-btn.selected {
+    background: linear-gradient(135deg, #ffd60a, #ff9f0a) !important;
+    border-color: #ffd60a !important;
+    color: #07080b !important;
+    box-shadow: 0 0 12px rgba(255, 214, 10, 0.35) !important;
+}
+
+/* Quick extra buttons for Ciccopaolo */
+.btn-quick-extra {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1px solid var(--card-stroke);
+    background-color: rgba(255, 255, 255, 0.02);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.btn-quick-extra:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.btn-quick-extra.active.btn-quick-coppia {
+    background: rgba(191, 90, 242, 0.15) !important; /* Purple theme for coppia */
+    border-color: rgba(191, 90, 242, 0.45) !important;
+    color: var(--accent-purple) !important;
+    box-shadow: 0 0 8px rgba(191, 90, 242, 0.15);
+}
+
+.btn-quick-extra.active.btn-quick-meno9 {
+    background: rgba(100, 210, 255, 0.15) !important; /* Teal theme for meno di 9 */
+    border-color: rgba(100, 210, 255, 0.45) !important;
+    color: var(--accent-teal) !important;
+    box-shadow: 0 0 8px rgba(100, 210, 255, 0.15);
 }
 
 

@@ -379,14 +379,15 @@ const PrimieraCalc = {
                 }
             });
 
-            const hasSelClass = selectedRank ? 'has-selection' : '';
-            const selText = selectedRank ? `${this.displayNameMap[selectedRank]} (${this.pointsMap[selectedRank]} pt)` : 'Nessuna';
-            
+            const badgeStyle = selectedRank 
+                ? `background-color: var(--accent-${suit.color}); color: #000; font-weight: bold`
+                : `background-color: var(--card-bg-light); color: var(--text-secondary);`;
+
             suitsHTML += `
                 <div class="suit-box ${hasSelClass}">
                     <div class="suit-header">
                         <span class="suit-title ${suit.color}">${suit.icon} ${suit.label}</span>
-                        <span class="suit-selection-badge" style="background-color: var(--accent-${suit.color}); color: #000; font-weight: bold">${selText}</span>
+                        <span class="suit-selection-badge" style="${badgeStyle}">${selText}</span>
                     </div>
                     <div class="suit-grid">
                         <div class="suit-row">
@@ -461,11 +462,17 @@ const PrimieraCalc = {
 
         const disabledAttr = isTaken ? 'disabled' : '';
         const sizeClass = isLarge ? 'large' : 'small';
+        
+        const isSettebello = suitId === 'denari' && rank === '7';
         const activeClass = isSelected ? `selected ${suitColor}` : '';
+        const settebelloClass = isSettebello ? 'settebello-btn' : '';
+        const buttonClasses = `rank-btn ${sizeClass} ${activeClass} ${settebelloClass}`.trim();
+        
+        const label = isSettebello ? '7 🌟' : this.displayNameMap[rank];
         
         return `
-            <button class="rank-btn ${sizeClass} ${activeClass}" ${disabledAttr} data-suit="${suitId}" data-rank="${rank}">
-                <span class="rank-lbl">${this.displayNameMap[rank]}</span>
+            <button class="${buttonClasses}" ${disabledAttr} data-suit="${suitId}" data-rank="${rank}">
+                <span class="rank-lbl">${label}</span>
                 <span class="rank-pts">${this.pointsMap[rank]} pt</span>
             </button>
         `;
@@ -1532,9 +1539,15 @@ const App = {
                         </div>
                         <div class="badge-row">
                             <span class="small-badge ${round.primieraWinnerId === p1.id ? 'active' : (round.primieraWinnerId === p2.id ? 'active green' : '')}">PRIM: ${round.primieraWinnerId ? Store.getPlayerName(round.primieraWinnerId) : '-'}</span>
-                            <span class="small-badge ${round.settebelloWinnerId === p1.id ? 'active' : (round.settebelloWinnerId === p2.id ? 'active green' : '')}">SETT: ${round.settebelloWinnerId ? Store.getPlayerName(round.settebelloWinnerId) : '-'}</span>
+                            ${round.settebelloWinnerId 
+                                ? `<span class="small-badge badge-settebello ${round.settebelloWinnerId === p1.id ? 'p1-win' : 'p2-win'}">🪙7️⃣ SETT: <span class="${round.settebelloWinnerId === p1.id ? 'badge-player-p1' : 'badge-player-p2'}">${Store.getPlayerName(round.settebelloWinnerId)}</span></span>`
+                                : `<span class="small-badge">🪙7️⃣ SETT: -</span>`
+                            }
                             <span class="small-badge ${round.carteWinnerId === p1.id ? 'active' : (round.carteWinnerId === p2.id ? 'active green' : '')}">CART: ${round.carteWinnerId ? Store.getPlayerName(round.carteWinnerId) : '-'}</span>
-                            <span class="small-badge ${round.denariWinnerId === p1.id ? 'active' : (round.denariWinnerId === p2.id ? 'active green' : '')}">DENA: ${round.denariWinnerId ? Store.getPlayerName(round.denariWinnerId) : '-'}</span>
+                            ${round.denariWinnerId 
+                                ? `<span class="small-badge badge-denari ${round.denariWinnerId === p1.id ? 'p1-win' : 'p2-win'}">🪙 DENA: <span class="${round.denariWinnerId === p1.id ? 'badge-player-p1' : 'badge-player-p2'}">${Store.getPlayerName(round.denariWinnerId)}</span></span>`
+                                : `<span class="small-badge">🪙 DENA: -</span>`
+                            }
                         </div>
                         <div class="round-row-footer" style="margin-top:6px;">
                             <div style="display:flex; flex-direction:column; gap:2px; font-size:10px; color:var(--text-secondary);">
@@ -1709,10 +1722,10 @@ const App = {
 
                     <!-- Settebello -->
                     <div class="selector-row">
-                        <span class="selector-row-title">Settebello</span>
+                        <span class="selector-row-title title-settebello">🪙7️⃣ Settebello</span>
                         <div class="selector-btn-group">
-                            <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p1.id)}" data-val="${p1.id}">${p1.name}</button>
-                            <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p2.id)}" data-val="${p2.id}">${p2.name}</button>
+                            <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p1.id, 'settebello')}" data-val="${p1.id}">${p1.name}</button>
+                            <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p2.id, 'settebello')}" data-val="${p2.id}">${p2.name}</button>
                             <button class="selector-btn scopa-sett-sel ${!settebelloWinnerId ? 'active' : ''}" data-val="none">Nessuno</button>
                         </div>
                     </div>
@@ -1729,10 +1742,10 @@ const App = {
 
                     <!-- Denari -->
                     <div class="selector-row">
-                        <span class="selector-row-title">Denari</span>
+                        <span class="selector-row-title title-denari">🪙 Denari</span>
                         <div class="selector-btn-group">
-                            <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p1.id)}" data-val="${p1.id}">${p1.name}</button>
-                            <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p2.id)}" data-val="${p2.id}">${p2.name}</button>
+                            <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p1.id, 'denari')}" data-val="${p1.id}">${p1.name}</button>
+                            <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p2.id, 'denari')}" data-val="${p2.id}">${p2.name}</button>
                             <button class="selector-btn scopa-den-sel ${!denariWinnerId ? 'active' : ''}" data-val="none">Nessuno</button>
                         </div>
                     </div>
@@ -3130,6 +3143,18 @@ const App = {
                     `;
                 });
 
+                const getPlayerWinClass = (winnerId) => {
+                    if (!winnerId) return '';
+                    const idx = game.players.findIndex(p => p.id === winnerId);
+                    return idx !== -1 ? `p${idx + 1}-win` : '';
+                };
+
+                const getPlayerTextClass = (winnerId) => {
+                    if (!winnerId) return '';
+                    const idx = game.players.findIndex(p => p.id === winnerId);
+                    return idx !== -1 ? `badge-player-p${idx + 1}` : '';
+                };
+
                 historyHTML += `
                     <div class="round-history-row" style="cursor:pointer;" data-idx="${actualIndex}">
                         <div class="round-row-header">
@@ -3140,9 +3165,15 @@ const App = {
                         </div>
                         <div class="badge-row">
                             <span class="small-badge active">${round.primieraWinnerId ? 'PRIM: ' + Store.getPlayerName(round.primieraWinnerId) : 'PRIM: -'}</span>
-                            <span class="small-badge active">${round.settebelloWinnerId ? 'SETT: ' + Store.getPlayerName(round.settebelloWinnerId) : 'SETT: -'}</span>
+                            ${round.settebelloWinnerId 
+                                ? `<span class="small-badge badge-settebello ${getPlayerWinClass(round.settebelloWinnerId)}">🪙7️⃣ SETT: <span class="${getPlayerTextClass(round.settebelloWinnerId)}">${Store.getPlayerName(round.settebelloWinnerId)}</span></span>`
+                                : `<span class="small-badge">🪙7️⃣ SETT: -</span>`
+                            }
                             <span class="small-badge active">${round.carteWinnerId ? 'CART: ' + Store.getPlayerName(round.carteWinnerId) : 'CART: -'}</span>
-                            <span class="small-badge active">${round.denariWinnerId ? 'DENA: ' + Store.getPlayerName(round.denariWinnerId) : 'DENA: -'}</span>
+                            ${round.denariWinnerId 
+                                ? `<span class="small-badge badge-denari ${getPlayerWinClass(round.denariWinnerId)}">🪙 DENA: <span class="${getPlayerTextClass(round.denariWinnerId)}">${Store.getPlayerName(round.denariWinnerId)}</span></span>`
+                                : `<span class="small-badge">🪙 DENA: -</span>`
+                            }
                         </div>
                         <div class="round-row-footer" style="margin-top:6px;">
                             <div style="font-size:10px; color:var(--text-secondary); display:flex; flex-direction:column; gap:2px;">
@@ -3298,23 +3329,27 @@ const App = {
         
         const scopeScores = {};
         const extraScores = {};
+        const coppiaState = {};
+        const menoDiNoveState = {};
         game.players.forEach(p => {
             scopeScores[p.id] = (roundToEdit && roundToEdit.scopeScores) ? Number(roundToEdit.scopeScores[p.id] || 0) : 0;
             extraScores[p.id] = (roundToEdit && roundToEdit.extraScores) ? Number(roundToEdit.extraScores[p.id] || 0) : 0;
+            coppiaState[p.id] = (roundToEdit && roundToEdit.coppiaState) ? !!roundToEdit.coppiaState[p.id] : false;
+            menoDiNoveState[p.id] = (roundToEdit && roundToEdit.menoDiNoveState) ? !!roundToEdit.menoDiNoveState[p.id] : false;
         });
 
         let primieraDetails = roundToEdit ? roundToEdit.primieraDetails : null;
 
-        const getActiveCls = (winnerId, matchId) => {
-            return winnerId === matchId ? 'active green' : '';
+        const getActiveCls = (winnerId, matchId, colorClass = 'green') => {
+            return winnerId === matchId ? `active ${colorClass}` : '';
         };
 
         const renderBody = () => {
             // Build players selectors buttons dynamically for 2 or 3 players
-            const renderSelectors = (title, field, activeVal, buttonClass) => {
+            const renderSelectors = (title, field, activeVal, buttonClass, colorClass, titleClass) => {
                 let btnsHTML = '';
                 game.players.forEach(p => {
-                    btnsHTML += `<button class="selector-btn ${buttonClass} ${getActiveCls(activeVal, p.id)}" data-val="${p.id}">${p.name}</button>`;
+                    btnsHTML += `<button class="selector-btn ${buttonClass} ${getActiveCls(activeVal, p.id, colorClass)}" data-val="${p.id}">${p.name}</button>`;
                 });
                 btnsHTML += `<button class="selector-btn ${buttonClass} ${!activeVal ? 'active' : ''}" data-val="none">Nessuno</button>`;
                 
@@ -3323,7 +3358,7 @@ const App = {
 
                 return `
                     <div class="selector-row">
-                        <span class="selector-row-title">${title}</span>
+                        <span class="selector-row-title ${titleClass || ''}">${title}</span>
                         <div style="display:flex; align-items:center;">
                             <div class="selector-btn-group">
                                 ${btnsHTML}
@@ -3337,9 +3372,10 @@ const App = {
             // Build Scope and Extra counter list
             let countersScopeHTML = '';
             let countersExtraHTML = '';
-            game.players.forEach(p => {
-                countersScopeHTML += renderCounterRow('scope', p);
-                countersExtraHTML += renderCounterRow('extra', p);
+            game.players.forEach((p, idx) => {
+                const isLast = idx === game.players.length - 1;
+                countersScopeHTML += renderCounterRow('scope', p, isLast);
+                countersExtraHTML += renderCounterRow('extra', p, isLast);
             });
 
             // Build live preview
@@ -3360,10 +3396,10 @@ const App = {
             const bodyHTML = `
                 <span class="form-section-title">PUNTI CLASSICI SCOPA (1 PT CIASCUNO)</span>
                 <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-                    ${renderSelectors("Primiera", "primiera", primieraWinnerId, "cp-prim-sel")}
-                    ${renderSelectors("Settebello", "settebello", settebelloWinnerId, "cp-sett-sel")}
-                    ${renderSelectors("Carte", "carte", carteWinnerId, "cp-cart-sel")}
-                    ${renderSelectors("Denari", "denari", denariWinnerId, "cp-den-sel")}
+                    ${renderSelectors("Primiera", "primiera", primieraWinnerId, "cp-prim-sel", "green")}
+                    ${renderSelectors("🪙7️⃣ Settebello", "settebello", settebelloWinnerId, "cp-sett-sel", "settebello", "title-settebello")}
+                    ${renderSelectors("Carte", "carte", carteWinnerId, "cp-cart-sel", "green")}
+                    ${renderSelectors("🪙 Denari", "denari", denariWinnerId, "cp-den-sel", "denari", "title-denari")}
                 </div>
 
                 <span class="form-section-title">SCOPE FATTE</span>
@@ -3389,16 +3425,35 @@ const App = {
             bindModalEvents();
         };
 
-        const renderCounterRow = (type, player) => {
+        const renderCounterRow = (type, player, isLast) => {
             const val = type === 'scope' ? scopeScores[player.id] : extraScores[player.id];
-            return `
-                <div class="counter-row">
-                    <span class="counter-row-title">${player.name}</span>
-                    <div class="counter-controls">
-                        <button class="counter-btn minus" data-type="${type}" data-pid="${player.id}">-</button>
-                        <span class="counter-value" id="val-${type}-${player.id}">${val}</span>
-                        <button class="counter-btn plus" data-type="${type}" data-pid="${player.id}">+</button>
+            
+            let extraControlsHTML = '';
+            if (type === 'extra') {
+                const isCoppiaActive = coppiaState[player.id] ? 'active' : '';
+                const isMeno9Active = menoDiNoveState[player.id] ? 'active' : '';
+                
+                extraControlsHTML = `
+                    <div class="quick-extra-row" style="display: flex; gap: 8px; margin-top: 8px; margin-bottom: 4px; width: 100%;">
+                        <button class="btn-quick-extra btn-quick-coppia ${isCoppiaActive}" data-pid="${player.id}" style="flex: 1;">Coppia (+3)</button>
+                        <button class="btn-quick-extra btn-quick-meno9 ${isMeno9Active}" data-pid="${player.id}" style="flex: 1;">Meno di 9 (+2)</button>
                     </div>
+                `;
+            }
+
+            const borderStyle = isLast ? '' : 'border-bottom: 1px solid var(--card-stroke);';
+
+            return `
+                <div class="counter-row-wrapper" style="display: flex; flex-direction: column; ${borderStyle} padding: 10px 0; width: 100%;">
+                    <div class="counter-row" style="border-bottom: none; padding: 4px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span class="counter-row-title">${player.name}</span>
+                        <div class="counter-controls" style="display: flex; align-items: center; gap: 12px;">
+                            <button class="counter-btn minus" data-type="${type}" data-pid="${player.id}">-</button>
+                            <span class="counter-value" id="val-${type}-${player.id}">${val}</span>
+                            <button class="counter-btn plus" data-type="${type}" data-pid="${player.id}">+</button>
+                        </div>
+                    </div>
+                    ${extraControlsHTML}
                 </div>
             `;
         };
@@ -3449,6 +3504,51 @@ const App = {
             bindGroup('.cp-sett-sel', val => settebelloWinnerId = val);
             bindGroup('.cp-cart-sel', val => carteWinnerId = val);
             bindGroup('.cp-den-sel', val => denariWinnerId = val);
+
+            // Quick extra buttons click handlers
+            document.querySelectorAll('.btn-quick-coppia').forEach(btn => {
+                btn.onclick = () => {
+                    const pid = btn.dataset.pid;
+                    triggerHaptic('light');
+                    
+                    // Toggle state
+                    coppiaState[pid] = !coppiaState[pid];
+                    
+                    if (coppiaState[pid]) {
+                        btn.classList.add('active');
+                        extraScores[pid] += 3;
+                    } else {
+                        btn.classList.remove('active');
+                        extraScores[pid] = Math.max(0, extraScores[pid] - 3);
+                    }
+                    
+                    // Update counter display
+                    document.getElementById(`val-extra-${pid}`).textContent = extraScores[pid];
+                    updateLivePreviews();
+                };
+            });
+
+            document.querySelectorAll('.btn-quick-meno9').forEach(btn => {
+                btn.onclick = () => {
+                    const pid = btn.dataset.pid;
+                    triggerHaptic('light');
+                    
+                    // Toggle state
+                    menoDiNoveState[pid] = !menoDiNoveState[pid];
+                    
+                    if (menoDiNoveState[pid]) {
+                        btn.classList.add('active');
+                        extraScores[pid] += 2;
+                    } else {
+                        btn.classList.remove('active');
+                        extraScores[pid] = Math.max(0, extraScores[pid] - 2);
+                    }
+                    
+                    // Update counter display
+                    document.getElementById(`val-extra-${pid}`).textContent = extraScores[pid];
+                    updateLivePreviews();
+                };
+            });
 
             // Counter plus/minus
             document.querySelectorAll('.counter-btn.plus').forEach(btn => {
@@ -3510,6 +3610,8 @@ const App = {
                     denariWinnerId,
                     scopeScores: { ...scopeScores },
                     extraScores: { ...extraScores },
+                    coppiaState: { ...coppiaState },
+                    menoDiNoveState: { ...menoDiNoveState },
                     primieraDetails
                 };
 
