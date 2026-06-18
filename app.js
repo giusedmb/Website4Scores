@@ -1508,10 +1508,10 @@ const App = {
                     return winnerId === matchId ? 'active' : '';
                 };
 
-                const scopeCount1 = round.scopeScores[p1.id] || 0;
-                const scopeCount2 = round.scopeScores[p2.id] || 0;
-                const napolaCount1 = round.napolaScores[p1.id] || 0;
-                const napolaCount2 = round.napolaScores[p2.id] || 0;
+                const scopeCount1 = round.scopeScores ? (round.scopeScores[p1.id] || 0) : 0;
+                const scopeCount2 = round.scopeScores ? (round.scopeScores[p2.id] || 0) : 0;
+                const napolaCount1 = round.napolaScores ? (round.napolaScores[p1.id] || 0) : 0;
+                const napolaCount2 = round.napolaScores ? (round.napolaScores[p2.id] || 0) : 0;
 
                 let scopeTexts = [];
                 if (scopeCount1 > 0) scopeTexts.push(`${p1.name} (${scopeCount1})`);
@@ -1657,8 +1657,12 @@ const App = {
         if (round.settebelloWinnerId === playerId) total += 1;
         if (round.carteWinnerId === playerId) total += 1;
         if (round.denariWinnerId === playerId) total += 1;
-        total += (round.scopeScores[playerId] || 0);
-        total += (round.napolaScores[playerId] || 0);
+        
+        const scopes = round.scopeScores ? (round.scopeScores[playerId] || 0) : 0;
+        const napola = round.napolaScores ? (round.napolaScores[playerId] || 0) : 0;
+        
+        total += Number(scopes);
+        total += Number(napola);
         return total;
     },
 
@@ -1675,10 +1679,10 @@ const App = {
         
         const scopeScores = {};
         const napolaScores = {};
-        scopeScores[p1.id] = roundToEdit ? (roundToEdit.scopeScores[p1.id] || 0) : 0;
-        scopeScores[p2.id] = roundToEdit ? (roundToEdit.scopeScores[p2.id] || 0) : 0;
-        napolaScores[p1.id] = roundToEdit ? (roundToEdit.napolaScores[p1.id] || 0) : 0;
-        napolaScores[p2.id] = roundToEdit ? (roundToEdit.napolaScores[p2.id] || 0) : 0;
+        scopeScores[p1.id] = (roundToEdit && roundToEdit.scopeScores) ? Number(roundToEdit.scopeScores[p1.id] || 0) : 0;
+        scopeScores[p2.id] = (roundToEdit && roundToEdit.scopeScores) ? Number(roundToEdit.scopeScores[p2.id] || 0) : 0;
+        napolaScores[p1.id] = (roundToEdit && roundToEdit.napolaScores) ? Number(roundToEdit.napolaScores[p1.id] || 0) : 0;
+        napolaScores[p2.id] = (roundToEdit && roundToEdit.napolaScores) ? Number(roundToEdit.napolaScores[p2.id] || 0) : 0;
 
         let primieraDetails = roundToEdit ? roundToEdit.primieraDetails : null;
 
@@ -1787,8 +1791,8 @@ const App = {
             if (settebelloWinnerId === playerId) pts++;
             if (carteWinnerId === playerId) pts++;
             if (denariWinnerId === playerId) pts++;
-            pts += scopeScores[playerId];
-            pts += napolaScores[playerId];
+            pts += Number(scopeScores[playerId] || 0);
+            pts += Number(napolaScores[playerId] || 0);
             return pts;
         };
 
@@ -3252,8 +3256,12 @@ const App = {
         if (round.settebelloWinnerId === playerId) total += 1;
         if (round.carteWinnerId === playerId) total += 1;
         if (round.denariWinnerId === playerId) total += 1;
-        total += (round.scopeScores[playerId] || 0);
-        total += (round.extraScores[playerId] || 0);
+        
+        const scopes = round.scopeScores ? (round.scopeScores[playerId] || 0) : 0;
+        const extra = round.extraScores ? (round.extraScores[playerId] || 0) : 0;
+        
+        total += Number(scopes);
+        total += Number(extra);
         return total;
     },
 
@@ -3263,8 +3271,8 @@ const App = {
         const extraTexts = [];
         
         game.players.forEach(p => {
-            const sc = round.scopeScores[p.id] || 0;
-            const ex = round.extraScores[p.id] || 0;
+            const sc = round.scopeScores ? (round.scopeScores[p.id] || 0) : 0;
+            const ex = round.extraScores ? (round.extraScores[p.id] || 0) : 0;
             if (sc > 0) scopeTexts.push(`${p.name} (${sc})`);
             if (ex > 0) extraTexts.push(`${p.name} (+${ex})`);
         });
@@ -3286,8 +3294,8 @@ const App = {
         const scopeScores = {};
         const extraScores = {};
         game.players.forEach(p => {
-            scopeScores[p.id] = roundToEdit ? (roundToEdit.scopeScores[p.id] || 0) : 0;
-            extraScores[p.id] = roundToEdit ? (roundToEdit.extraScores[p.id] || 0) : 0;
+            scopeScores[p.id] = (roundToEdit && roundToEdit.scopeScores) ? Number(roundToEdit.scopeScores[p.id] || 0) : 0;
+            extraScores[p.id] = (roundToEdit && roundToEdit.extraScores) ? Number(roundToEdit.extraScores[p.id] || 0) : 0;
         });
 
         let primieraDetails = roundToEdit ? roundToEdit.primieraDetails : null;
@@ -3396,8 +3404,8 @@ const App = {
             if (settebelloWinnerId === playerId) pts++;
             if (carteWinnerId === playerId) pts++;
             if (denariWinnerId === playerId) pts++;
-            pts += scopeScores[playerId];
-            pts += extraScores[playerId];
+            pts += Number(scopeScores[playerId] || 0);
+            pts += Number(extraScores[playerId] || 0);
             return pts;
         };
 
