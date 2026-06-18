@@ -1568,6 +1568,7 @@ const App = {
             <div class="game-view-header">
                 <button id="btn-active-back" class="btn-back"><i data-lucide="arrow-left"></i> Esci</button>
                 <div class="game-toolbar">
+                    <button id="btn-active-swap" class="btn-toolbar-circle" title="Inverti Giocatori"><i data-lucide="arrow-left-right"></i></button>
                     <button id="btn-active-reset" class="btn-toolbar-circle"><i data-lucide="rotate-ccw"></i></button>
                     <button id="btn-active-end" class="btn-toolbar-circle" style="color:var(--accent-red)"><i data-lucide="x-circle"></i></button>
                 </div>
@@ -1608,9 +1609,16 @@ const App = {
 
         lucide.createIcons();
 
-        // Bind events: Back, Reset, Cancel
+        // Bind events: Back, Reset, Cancel, Swap
         document.getElementById('btn-active-back').onclick = () => this.goBack();
         
+        document.getElementById('btn-active-swap').onclick = () => {
+            triggerHaptic('light');
+            game.players.reverse();
+            Store.save();
+            this.renderActiveScopa();
+        };
+
         document.getElementById('btn-active-reset').onclick = () => {
             if (confirm("Sei sicuro di voler azzerare il punteggio e i round della partita corrente?")) {
                 triggerHaptic('warning');
@@ -1713,8 +1721,8 @@ const App = {
                         <div style="display:flex; align-items:center;">
                             <div class="selector-btn-group">
                                 <button class="selector-btn scopa-prim-sel ${getActiveCls(primieraWinnerId, p1.id)}" data-val="${p1.id}">${p1.name}</button>
-                                <button class="selector-btn scopa-prim-sel ${getActiveCls(primieraWinnerId, p2.id)}" data-val="${p2.id}">${p2.name}</button>
                                 <button class="selector-btn scopa-prim-sel ${!primieraWinnerId ? 'active' : ''}" data-val="none">Nessuno</button>
+                                <button class="selector-btn scopa-prim-sel ${getActiveCls(primieraWinnerId, p2.id)}" data-val="${p2.id}">${p2.name}</button>
                             </div>
                             <button id="btn-calc-primiera" class="btn-calc">Calcola</button>
                         </div>
@@ -1725,8 +1733,8 @@ const App = {
                         <span class="selector-row-title title-settebello">🪙7️⃣ Settebello</span>
                         <div class="selector-btn-group">
                             <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p1.id, 'settebello')}" data-val="${p1.id}">${p1.name}</button>
-                            <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p2.id, 'settebello')}" data-val="${p2.id}">${p2.name}</button>
                             <button class="selector-btn scopa-sett-sel ${!settebelloWinnerId ? 'active' : ''}" data-val="none">Nessuno</button>
+                            <button class="selector-btn scopa-sett-sel ${getActiveCls(settebelloWinnerId, p2.id, 'settebello')}" data-val="${p2.id}">${p2.name}</button>
                         </div>
                     </div>
 
@@ -1735,8 +1743,8 @@ const App = {
                         <span class="selector-row-title">Carte</span>
                         <div class="selector-btn-group">
                             <button class="selector-btn scopa-cart-sel ${getActiveCls(carteWinnerId, p1.id)}" data-val="${p1.id}">${p1.name}</button>
-                            <button class="selector-btn scopa-cart-sel ${getActiveCls(carteWinnerId, p2.id)}" data-val="${p2.id}">${p2.name}</button>
                             <button class="selector-btn scopa-cart-sel ${!carteWinnerId ? 'active' : ''}" data-val="none">Nessuno</button>
+                            <button class="selector-btn scopa-cart-sel ${getActiveCls(carteWinnerId, p2.id)}" data-val="${p2.id}">${p2.name}</button>
                         </div>
                     </div>
 
@@ -1745,8 +1753,8 @@ const App = {
                         <span class="selector-row-title title-denari">🪙 Denari</span>
                         <div class="selector-btn-group">
                             <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p1.id, 'denari')}" data-val="${p1.id}">${p1.name}</button>
-                            <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p2.id, 'denari')}" data-val="${p2.id}">${p2.name}</button>
                             <button class="selector-btn scopa-den-sel ${!denariWinnerId ? 'active' : ''}" data-val="none">Nessuno</button>
+                            <button class="selector-btn scopa-den-sel ${getActiveCls(denariWinnerId, p2.id, 'denari')}" data-val="${p2.id}">${p2.name}</button>
                         </div>
                     </div>
                 </div>
@@ -2175,6 +2183,7 @@ const App = {
             <div class="game-view-header">
                 <button id="btn-active-back" class="btn-back"><i data-lucide="arrow-left"></i> Esci</button>
                 <div class="game-toolbar">
+                    <button id="btn-active-swap" class="btn-toolbar-circle" title="Inverti Giocatori"><i data-lucide="arrow-left-right"></i></button>
                     <button id="btn-active-reset" class="btn-toolbar-circle"><i data-lucide="rotate-ccw"></i></button>
                     <button id="btn-active-end" class="btn-toolbar-circle" style="color:var(--accent-red)"><i data-lucide="x-circle"></i></button>
                 </div>
@@ -2217,9 +2226,16 @@ const App = {
 
         lucide.createIcons();
 
-        // Actions: Back, Reset, Cancel
+        // Actions: Back, Reset, Cancel, Swap
         document.getElementById('btn-active-back').onclick = () => this.goBack();
         
+        document.getElementById('btn-active-swap').onclick = () => {
+            triggerHaptic('light');
+            game.players.reverse();
+            Store.save();
+            this.renderActiveBriscola();
+        };
+
         document.getElementById('btn-active-reset').onclick = () => {
             if (confirm("Sei sicuro di voler azzerare i segni vinti e le mani giocate?")) {
                 triggerHaptic('warning');
@@ -3193,6 +3209,7 @@ const App = {
             <div class="game-view-header">
                 <button id="btn-active-back" class="btn-back"><i data-lucide="arrow-left"></i> Esci</button>
                 <div class="game-toolbar">
+                    <button id="btn-active-swap" class="btn-toolbar-circle" title="Inverti Giocatori"><i data-lucide="arrow-left-right"></i></button>
                     <button id="btn-active-reset" class="btn-toolbar-circle"><i data-lucide="rotate-ccw"></i></button>
                     <button id="btn-active-end" class="btn-toolbar-circle" style="color:var(--accent-red)"><i data-lucide="x-circle"></i></button>
                 </div>
@@ -3225,9 +3242,16 @@ const App = {
 
         lucide.createIcons();
 
-        // Actions: Back, Reset, Cancel
+        // Actions: Back, Reset, Cancel, Swap
         document.getElementById('btn-active-back').onclick = () => this.goBack();
         
+        document.getElementById('btn-active-swap').onclick = () => {
+            triggerHaptic('light');
+            game.players.reverse();
+            Store.save();
+            this.renderActiveCiccopaolo();
+        };
+
         document.getElementById('btn-active-reset').onclick = () => {
             if (confirm("Sei sicuro di voler azzerare il punteggio, le vittorie e i round della partita corrente?")) {
                 triggerHaptic('warning');
@@ -3385,10 +3409,18 @@ const App = {
         const renderBody = () => {
             const renderSelectors = (title, field, activeVal, buttonClass, colorClass, titleClass) => {
                 let btnsHTML = '';
-                game.players.forEach(p => {
-                    btnsHTML += `<button class="selector-btn ${buttonClass} ${getActiveCls(activeVal, p.id, colorClass)}" data-val="${p.id}">${p.name}</button>`;
-                });
-                btnsHTML += `<button class="selector-btn ${buttonClass} ${!activeVal ? 'active' : ''}" data-val="none">Nessuno</button>`;
+                if (game.players.length === 2) {
+                    const p1 = game.players[0];
+                    const p2 = game.players[1];
+                    btnsHTML += `<button class="selector-btn ${buttonClass} ${getActiveCls(activeVal, p1.id, colorClass)}" data-val="${p1.id}">${p1.name}</button>`;
+                    btnsHTML += `<button class="selector-btn ${buttonClass} ${!activeVal ? 'active' : ''}" data-val="none">Nessuno</button>`;
+                    btnsHTML += `<button class="selector-btn ${buttonClass} ${getActiveCls(activeVal, p2.id, colorClass)}" data-val="${p2.id}">${p2.name}</button>`;
+                } else {
+                    game.players.forEach(p => {
+                        btnsHTML += `<button class="selector-btn ${buttonClass} ${getActiveCls(activeVal, p.id, colorClass)}" data-val="${p.id}">${p.name}</button>`;
+                    });
+                    btnsHTML += `<button class="selector-btn ${buttonClass} ${!activeVal ? 'active' : ''}" data-val="none">Nessuno</button>`;
+                }
                 
                 const calcBtn = field === 'primiera' ? `<button id="btn-calc-primiera" class="btn-calc green">Calcola</button>` : '';
 
